@@ -23,6 +23,7 @@ import enquiryRoutes from "./routes/enquiryRoutes.js";
 import userPackageRoutes from "./routes/userPackageRoutes.js";
 import bacheloretteRoutes from "./routes/bacheloretteRoutes.js";
 import appVersionRoutes from "./routes/appVersionRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 const app = express();
 
@@ -101,6 +102,7 @@ app.use("/api", enquiryRoutes);
 app.use("/api", userPackageRoutes);
 app.use("/api", bacheloretteRoutes);
 app.use("/api", appVersionRoutes);
+app.use("/api", notificationRoutes);
 
 // ✅ Error Handler
 app.use(errorHandler);

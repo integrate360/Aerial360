@@ -9,44 +9,7 @@ let cachedLocations = null;
 let cachedAds = null;
 let cachedAllTrainers = null;
 
-// export const Register = async (
-//   fullname,
-//   email,
-//   phonenumber,
-//   password,
-//   emergencyPhone,
-//   medicalcondition,
-//   token,
-//   imageUri,
-// ) => {
-//   try {
 
-//     const file = {
-//       uri: imageUri,
-//       type: 'image/jpeg',
-//       name: 'profile.jpg',
-//     };
-
-//     const formData = new FormData();
-//     formData.append('name', fullname);
-//     formData.append('email', email);
-//     formData.append('phone', phonenumber);
-//     formData.append('password', password);
-//     formData.append('emergencyPhone', emergencyPhone);
-//     formData.append('medicalCondition', medicalcondition);
-//     formData.append('deviceToken', token);
-//     if (imageUri) formData.append('image', file);
-
-//     const res = await axios.post(`${BaseUrl}user/register/`, formData, {
-//       headers: {
-//         'Content-Type': 'multipart/form-data',
-//       },
-//     });
-//     return res?.data;
-//   } catch (err) {
-//     console.log(err?.message || 'Something went wrong');
-//   }
-// };
 
 export const Register = async (
   fullname,
@@ -64,7 +27,8 @@ export const Register = async (
       phone: phonenumber,
       password: password,
       emergencyPhone: emergencyPhone,
-      medicalcondition: medicalcondition,  // FIXED key spelling
+      medicalcondition: medicalcondition,
+      medicalCondition: medicalcondition,
       deviceToken: token,
     };
 
@@ -90,7 +54,7 @@ export const Register = async (
 
 export const login = async (Email, Password) => {
   try {
-    const { data } = await axios.post(`${BaseUrl}/user/login/`, {
+    const { data } = await axios.post(`${BaseUrl}user/login/`, {
       email: Email,
       password: Password,
     });
@@ -103,7 +67,7 @@ export const login = async (Email, Password) => {
 
 export const emailOtp = async email => {
   try {
-    const res = await axios.post(`${BaseUrl}/user/forgot/otp/`, {
+    const res = await axios.post(`${BaseUrl}user/forgot/otp`, {
       email,
     });
     if (res?.status !== 200)
@@ -117,7 +81,7 @@ export const emailOtp = async email => {
 
 export const forgot = async ({ email, password, otp }) => {
   try {
-    const res = await axios.post(`${BaseUrl}/user/forgot/password/`, {
+    const res = await axios.post(`${BaseUrl}user/forgot/password`, {
       email,
       password,
       otp,
@@ -136,7 +100,7 @@ export const getAllCategerys = async (forceRefresh = false) => {
     return { data: cachedCategories, status: 200 };
   }
   try {
-    const res = await axios.get(`${BaseUrl}/category/`);
+    const res = await axios.get(`${BaseUrl}category/`);
     if (res?.status !== 200)
       return { status: res?.status, message: res?.body?.message, data: [] };
     cachedCategories = res?.data?.data;
@@ -164,7 +128,7 @@ export const getAllClasses = async (forceRefresh = false) => {
 };
 export const getPackgeById = async id => {
   try {
-    const res = await axios.get(`${BaseUrl}/package/${id}`);
+    const res = await axios.get(`${BaseUrl}package/${id}`);
     if (res?.status !== 200) return { status: 300, message: res?.data?.message };
     return { status: res?.status, data: res?.data };
   } catch (error) {
@@ -191,7 +155,7 @@ export const getAllPackges = async (forceRefresh = false) => {
     return cachedPackages;
   }
   try {
-    const { data } = await axios.get(`${BaseUrl}/package/`);
+    const { data } = await axios.get(`${BaseUrl}package/`);
     cachedPackages = data;
     return data;
   } catch (error) {
@@ -200,7 +164,7 @@ export const getAllPackges = async (forceRefresh = false) => {
 };
 export const getCategoryPackges = async id => {
   try {
-    const res = await axios.get(`${BaseUrl}/package/category/${id}`);
+    const res = await axios.get(`${BaseUrl}package/category/${id}`);
     cachedPackages = res?.data?.packages;
     return res?.data?.packages;
   } catch (error) {
@@ -212,7 +176,7 @@ export const getAllLocations = async (forceRefresh = false) => {
     return cachedLocations;
   }
   try {
-    const { data } = await axios.get(`${BaseUrl}/allocations/`);
+    const { data } = await axios.get(`${BaseUrl}allocations`);
     cachedLocations = data;
     return data;
   } catch (error) {
@@ -226,13 +190,13 @@ export const PaymentRequest = async (
   userId,
   isPackage,
   bookings,
+  amount,
 ) => {
   try {
-    const res = await axios.post(`${BaseUrl}/payment/`, {
+    const res = await axios.post(`${BaseUrl}payment/`, {
       class: id,
-      // package: packageId,
       user: userId,
-      amount: 500,
+      amount: amount || 500,
       isPackage,
       bookings,
     });
@@ -251,7 +215,7 @@ export const PackagePayment = async (
   storedata,
 ) => {
   try {
-    const res = await axios.post(`${BaseUrl}/payment/package`, {
+    const res = await axios.post(`${BaseUrl}payment/package`, {
       package: packageId,
       user: userId,
       amount: prices,
@@ -312,7 +276,7 @@ export const getAllAds = async (forceRefresh = false) => {
     return cachedAds;
   }
   try {
-    const { data } = await axios.get(`${BaseUrl}/ads`);
+    const { data } = await axios.get(`${BaseUrl}ads`);
     cachedAds = data.data;
     return data.data;
   } catch (error) {
@@ -325,7 +289,7 @@ export const getAllTrainers = async (forceRefresh = false) => {
     return cachedAllTrainers;
   }
   try {
-    const { data } = await axios.get(`${BaseUrl}/staff/`);
+    const { data } = await axios.get(`${BaseUrl}staff/`);
     cachedAllTrainers = data.data;
     return data.data;
   } catch (error) {
@@ -335,7 +299,7 @@ export const getAllTrainers = async (forceRefresh = false) => {
 
 export const Enquire = async D => {
   try {
-    const { data } = await axios.post(`${BaseUrl}/enquiry/`, D);
+    const { data } = await axios.post(`${BaseUrl}enquiry/`, D);
     return data;
   } catch (err) {
     console.log(err.response?.data?.message || 'Something went wrong');
@@ -351,7 +315,7 @@ export const Bachelorette = async D => {
 };
 export const GetUsers = async (userId, token) => {
   try {
-    const { data } = await axios.get(`${BaseUrl}/user/${userId}`, {
+    const { data } = await axios.get(`${BaseUrl}user/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -384,7 +348,7 @@ export const UpDateAllUser = async (
     formData.append('emergencyPhone', emergencyContact);
     formData.append('medicalCondition', medicalCondition);
     if (image) formData.append('image', image);
-    const { data } = await axios.put(`${BaseUrl}/user/${userId}`, formData, {
+    const { data } = await axios.put(`${BaseUrl}user/${userId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,

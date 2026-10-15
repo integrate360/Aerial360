@@ -24,13 +24,13 @@ import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
 
 // Routes
 router.post("/booking/", authMiddleware, createBooking);
-router.post("/bookingforadmin/", createBookingForAdmin);
+router.post("/bookingforadmin/", authMiddleware, isAdmin, createBookingForAdmin);
 router.post("/booking/multiple", authMiddleware, createMultipleBookings);
-router.post("/booking/multipleAdmin", authMiddleware, createMultipleBookingsAdmin);
-router.get("/bookings/", getAllBookings);
+router.post("/booking/multipleAdmin", authMiddleware, isAdmin, createMultipleBookingsAdmin);
+router.get("/bookings/", authMiddleware, isAdmin, getAllBookings);
 router.get("/getAllBookingsdates", getAllBookingsdates);
 router.get("/getAllBookingsdatestest", getAllBookingsdatesadmin);
-router.get("/getTotalAmount", getTotalAmount);
+router.get("/getTotalAmount", authMiddleware, isAdmin, getTotalAmount);
 router.get("/booking/:id", authMiddleware, getBookingById);
 router.get("/booking/user/:id", authMiddleware, getBookingsByUser);
 router.get("/bookings/available-slots", availableSlots);
@@ -39,7 +39,7 @@ router.post("/booking/availability/", showAvailability);
 router.put(
   "/booking/class/reschedule",
   authMiddleware,
-  // isAdmin,
+  isAdmin,
   sendNotificationToUsers
 );
 router.put("/booking/:id", authMiddleware, isAdmin, updateBooking);

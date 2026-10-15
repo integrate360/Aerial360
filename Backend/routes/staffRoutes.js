@@ -28,9 +28,11 @@ router.get("/staff/:id", authMiddleware, isAdmin, getStaffById);
 
 router.put(
   "/staff/:id",
+  authMiddleware,
+  isAdmin,
   upload.single("image"),
   updateStaff
 );
-router.delete("/staff/:id", deleteStaff);
+router.delete("/staff/:id", authMiddleware, isAdmin, deleteStaff);
 
 export default router;

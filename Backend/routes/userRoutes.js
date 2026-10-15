@@ -20,7 +20,7 @@ import {
   getAllUsersforadmin,
   getMe,
 } from "../controllers/userController.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
 import multer from "multer";
 
 const router = express.Router();
@@ -35,16 +35,16 @@ router.post("/user/forgot/password", forgotPassword);
 router.post("/user/change/", changePassword);
 router.post("/user/resetPassword/:resetToken/", resetPassword);
 router.get("/user/logout/", authMiddleware, logout);
-router.get("/users/", getAllUsers);
-router.get("/getAllUsersforadmin/", getAllUsersforadmin);
-router.post("/send/:userId", sendPushNotification);
-router.get("/totalUsers/", totalUsers);
+router.get("/users/", authMiddleware, isAdmin, getAllUsers);
+router.get("/getAllUsersforadmin/", authMiddleware, isAdmin, getAllUsersforadmin);
+router.post("/send/:userId", authMiddleware, isAdmin, sendPushNotification);
+router.get("/totalUsers/", authMiddleware, isAdmin, totalUsers);
 router.get("/user/:id/", authMiddleware, getUser);
 router.get("/user/me/get", authMiddleware, getMe);
 router.post("/save-device-token", authMiddleware, saveDeviceToken);
 router.patch("/remove-fcm-token", authMiddleware, removeDeviceToken);
 router.put("/user/:id/", authMiddleware, upload.single("image"), updateUser);
-router.put("/updateUseradmin/:id/", authMiddleware, upload.single("image"), updateUseradmin);
-router.delete("/users/:id/", deleteUser);
+router.put("/updateUseradmin/:id/", authMiddleware, isAdmin, upload.single("image"), updateUseradmin);
+router.delete("/users/:id/", authMiddleware, deleteUser);
 
 export default router;

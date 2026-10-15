@@ -42,4 +42,24 @@ const isAdmin = asyncHandler(async (req, res, next) => {
   else throw new Error("Not Authozired");
 });
 
-export { authMiddleware, isAdmin };
+const optionalAuth = asyncHandler(async (req, res, next) => {
+  let token;
+  if (req?.headers?.authorization?.startsWith("Bearer")) {
+    token = req?.headers?.authorization?.split(" ")[1];
+    if (token) {
+      try {
+        const decode = jwt.verify(token, process.env.JWT);
+        let user = await UserM.findById(decode.id);
+        if (!user) user = await Admin.findById(decode.id);
+        if (user) {
+          req.user = user;
+        }
+      } catch (error) {
+        // Token invalid/expired - continue as unauthenticated
+      }
+    }
+  }
+  next();
+});
+
+export { authMiddleware, isAdmin, optionalAuth };

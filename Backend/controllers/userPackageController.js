@@ -580,6 +580,16 @@ const deleteBooking = async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
 
+    // Verify booking ownership
+    if (req.user && booking.user) {
+      const isOwner = booking.user.toString() === req.user._id.toString();
+      const AdminModel = (await import("../models/adminModel.js")).default;
+      const isAdminUser = await AdminModel.findById(req.user._id);
+      if (!isOwner && !isAdminUser) {
+        return res.status(403).json({ message: "You are not authorized to cancel this booking" });
+      }
+    }
+
     // 2️⃣ Pick earliest date & earliest time from booking
     const bookingDate = booking.dates[0];
     const bookingTime = booking.time[0];

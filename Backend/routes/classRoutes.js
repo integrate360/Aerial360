@@ -32,9 +32,9 @@ router.put(
 );
 
 router.get("/classes", getClasses);
-router.get("/getAdminClasses", getAdminClasses);
+router.get("/getAdminClasses", authMiddleware, isAdmin, getAdminClasses);
 router.get("/class/:id", getClassById);
-router.delete("/class/:id", deleteClass);
-router.get("/totalClasses", getTotalClasses);
+router.delete("/class/:id", authMiddleware, isAdmin, deleteClass);
+router.get("/totalClasses", authMiddleware, isAdmin, getTotalClasses);
 
 export default router;

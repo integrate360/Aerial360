@@ -1954,51 +1954,7 @@ const getBookingsByUser = AsyncHandler(async (req, res) => {
   }
 });
 
-// const getAllLastBookingDates = AsyncHandler(async (req, res) => {
-//   try {
-//     // Fetch all bookings with populated fields
-//     const bookings = await Booking.find()
-//       .populate("trainer")
-//       .populate("class")
-//       .populate("user");
 
-//     if (!bookings.length) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "No bookings found",
-//       });
-//     }
-//     const userBookingDates = {};
-
-//     bookings.forEach((booking) => {
-//       const userId = booking.user._id.toString();
-//       const mostRecentDate = new Date(Math.max(...booking.dates.map(date => new Date(date))));
-//       if (!userBookingDates[userId] || mostRecentDate > userBookingDates[userId].date) {
-//         userBookingDates[userId] = {
-//           date: mostRecentDate,
-//           email: booking.user.email,
-//         };
-//       }
-//     });
-//     const result = Object.keys(userBookingDates).map((userId) => ({
-//       userId,
-//       email: userBookingDates[userId].email,
-//       lastBookingDate: userBookingDates[userId].date,
-//     }));
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Last booking dates for all users fetched successfully",
-//       data: result,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       success: false,
-//       message: "An error occurred while fetching last booking dates for all users",
-//     });
-//   }
-// });
 
 // Function to fetch last booking dates and send emails
 const sendExpiringBookingEmails = async () => {
@@ -2157,19 +2113,34 @@ const availableSlots = AsyncHandler(async (req, res) => {
 
     // Calculate available slots
     const availableSlots = datesToCheck.map((date) => {
-      // Check if it's an available weekday
-      const isAvailableDay = booking.class.availability.includes(date.getDay());
+      // Check if it's an available weekday from availability array of objects
+      const isAvailableDay = (booking.class?.availability || []).some(
+        (s) => s.day === date.getDay()
+      );
+
+      // Find matching slot for capacity
+      const matchingSlot = (booking.class?.availability || []).find(
+        (s) =>
+          s.day === date.getDay() &&
+          (Array.isArray(booking.time)
+            ? booking.time.includes(s.time)
+            : s.time === booking.time)
+      );
+      const slotCapacity =
+        matchingSlot?.maxPeople || booking.class?.maxPeople || 15;
 
       // Count bookings for this date
       const bookingsOnDate = existingBookings.filter(
-        (b) => b.dates[0].toDateString() === date.toDateString(),
+        (b) => b.dates[0] && new Date(b.dates[0]).toDateString() === date.toDateString()
       ).length;
 
       // Check if slot is at least 3 hours away
       const slotDateTime = new Date(date);
       const bookingTime = Array.isArray(booking.time) ? booking.time[0] : booking.time;
-      const [hours, minutes] = bookingTime.split(":");
-      slotDateTime.setHours(parseInt(hours), parseInt(minutes), 0);
+      if (bookingTime && typeof bookingTime === "string") {
+        const [hours, minutes] = bookingTime.split(":");
+        slotDateTime.setHours(parseInt(hours) || 0, parseInt(minutes) || 0, 0);
+      }
 
       const threeHoursFromNow = new Date();
       threeHoursFromNow.setHours(threeHoursFromNow.getHours() + 3);
@@ -2177,20 +2148,20 @@ const availableSlots = AsyncHandler(async (req, res) => {
       // Calculate if slot is available
       const isAvailable =
         isAvailableDay &&
-        bookingsOnDate < booking.class.maxPeople &&
+        bookingsOnDate < slotCapacity &&
         slotDateTime > threeHoursFromNow &&
         (!effectiveExpiry || slotDateTime <= moment(effectiveExpiry).endOf("day"));
 
       return {
         date: date.toISOString(),
         available: isAvailable,
-        remainingSlots: booking.class.maxPeople - bookingsOnDate,
+        remainingSlots: Math.max(0, slotCapacity - bookingsOnDate),
       };
     });
 
     res.json({
       bookingDetails: {
-        packageDuration: booking.pacakge.duration,
+        packageDuration: booking.package?.duration || booking.pacakge?.duration || null,
         time: booking.time,
         originalDate: booking.dates[0],
       },
@@ -2201,111 +2172,6 @@ const availableSlots = AsyncHandler(async (req, res) => {
     res.status(500).json({ message: "Error fetching available slots" });
   }
 });
-
-// const reschedule = AsyncHandler(async (req, res) => {
-//   try {
-//     const { newDate, date } = req.body;
-//     const { id } = req.params;
-
-//     const booking = await Booking.aggregate([
-//       {
-//         $match: { _id: new mongoose.Types.ObjectId(id) },
-//       },
-//       {
-//         $lookup: {
-//           from: "classes",
-//           localField: "class",
-//           foreignField: "_id",
-//           as: "classDetails",
-//         },
-//       },
-//       {
-//         $unwind: "$classDetails",
-//       },
-//     ]);
-
-//     if (!booking || booking.length === 0) {
-//       return res.status(404).json({ message: "Booking not found" });
-//     }
-
-//     const bookingData = booking[0];
-//     const formattedDate = new Date(date).toISOString();
-
-//     // Ensure the date exists in the booking
-//     const index = bookingData.dates.findIndex(
-//       (d) => new Date(d).toISOString() === formattedDate
-//     );
-
-//     if (index === -1) {
-//       return res
-//         .status(400)
-//         .json({ message: "Original date not found in booking" });
-//     }
-
-//     // Update the date
-//     bookingData.dates.splice(index, 1, new Date(newDate));
-//     await Booking.findByIdAndUpdate(
-//       id,
-//       { ...req.body, dates: bookingData.dates },
-//       { new: true }
-//     );
-
-//     const user = await User.findById(bookingData.user).select("name email");
-//     if (user && user.email) {
-//       const emailContent = `
-//         <div style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px;">
-//           <div style="background-color: #4a148cff; color: white; padding: 20px; text-align: center; font-size: 24px;">
-//             <strong>Booking Rescheduled Successfully</strong>
-//           </div>
-//           <p style="font-size: 16px; color: #555; text-align: center; margin-top: 20px;">
-//             Hello ${user.name},
-//           </p>
-//           <p style="font-size: 16px; color: #555; text-align: center;">
-//             Your booking for the class <strong>${
-//               bookingData.classDetails.name
-//             }</strong> has been successfully rescheduled.
-//           </p>
-//           <p style="font-size: 16px; color: #555; text-align: center;">
-//             <strong>New Date:</strong> ${new Date(newDate).toDateString()}
-//           </p>
-//           <p style="font-size: 16px; color: #555; text-align: center; margin-top: 20px;">
-//             Thank you for choosing our services!
-//           </p>
-//         </div>
-//       `;
-
-//       try {
-//         const response = await sgMail.send({
-//           to: user.email,
-//           from: "airboundfitness@gmail.com",
-//           subject: "Booking Rescheduled Successfully",
-//           html: emailContent,
-//         });
-
-//         console.log("Email sent successfully:", response);
-//       } catch (emailError) {
-//         console.error(
-//           "Failed to send email:",
-//           emailError.response?.body || emailError.message
-//         );
-
-//         if (emailError.response?.body?.errors) {
-//           emailError.response.body.errors.forEach((error) => {
-//             console.error("Email error detail:", error);
-//           });
-//         }
-//       }
-//     }
-
-//     res.json({
-//       message: "Booking rescheduled successfully",
-//       booking: bookingData,
-//     });
-//   } catch (error) {
-//     console.error("Error in reschedule function:", error.message);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
 
 const reschedule = AsyncHandler(async (req, res) => {
   try {
@@ -2416,6 +2282,33 @@ const reschedule = AsyncHandler(async (req, res) => {
           message: "The new rescheduled class must be at least 3 hours in the future from now."
         });
       }
+    }
+
+    // Verify target slot capacity
+    const targetClassId = bookingData.classDetails._id;
+    const targetDateStart = moment(newDate).startOf("day").toDate();
+    const targetDateEnd = moment(newDate).endOf("day").toDate();
+
+    const existingTargetBookings = await Booking.find({
+      _id: { $ne: id },
+      class: targetClassId,
+      dates: { $elemMatch: { $gte: targetDateStart, $lte: targetDateEnd } },
+      time: time,
+    });
+    const bookedPeople = existingTargetBookings.reduce((sum, b) => sum + (b.people || 1), 0);
+
+    const dayOfWeek = moment(newDate).day();
+    const targetSlot = (bookingData.classDetails.availability || []).find(
+      (s) => s.day === dayOfWeek && s.time === time
+    );
+    const maxCapacity = targetSlot?.maxPeople || bookingData.classDetails.maxPeople || 15;
+    const requestedPeople = bookingData.people || 1;
+
+    if (bookedPeople + requestedPeople > maxCapacity) {
+      return res.status(400).json({
+        success: false,
+        message: `The selected slot on ${moment(newDate).format("DD-MM-YYYY")} at ${time} is full (${bookedPeople}/${maxCapacity} booked). Please select another slot.`,
+      });
     }
 
     // Update the date
@@ -2603,19 +2496,21 @@ const showAvailability = async (req, res) => {
 
     // Update the slots with the current number of people booked
     const updatedSlots = daySlots?.map((slot) => {
-      let count = 0;
       const slotBookings = formattedBookings?.filter((booking) => {
-        count += booking?.people;
+        if (Array.isArray(booking.time)) {
+          return booking.time.includes(slot?.time);
+        }
         return booking.time === slot?.time;
       });
+      const count = slotBookings.reduce((sum, b) => sum + (b?.people || 1), 0);
       return {
+        _id: slot?._id || slot?.id || slot?.trainers,
         day: slot?.day,
         time: slot?.time,
         duration: slot?.duration,
         maxPeople: slot?.maxPeople,
         locations: slot?.locations,
         trainers: slot?.trainers,
-        _id: slot?.trainers,
         people: count,
       };
     });

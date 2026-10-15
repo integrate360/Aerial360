@@ -30,25 +30,47 @@ const adminLogin = asyncHandler(async (req, res) => {
 
 const registerAdmin = asyncHandler(async (req, res) => {
   const { name, email, phone, password } = req.body;
-  try {
-    // check if admin already exists
-    const admin = await Admin.findOne({ email });
-    if (admin) throw new Error("Admin already exists with this email");
 
-    // hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // create new admin
-    const newAdmin = new Admin({
-      name,
-      email,
-      phone,
-      password: hashedPassword,
-    });
-    await newAdmin.save();
-    res.send(newAdmin);
-  } catch (error) {
-    throw new Error(error);
+  if (!name || !email || !password) {
+    res.status(400);
+    throw new Error("Name, email, and password are required");
   }
+
+  // If admins exist, only an existing authenticated admin can create another admin
+  const totalAdmins = await Admin.countDocuments();
+  if (totalAdmins > 0) {
+    if (!req.user || !(await Admin.findById(req.user._id))) {
+      res.status(403);
+      throw new Error("Unauthorized. Only existing admins can register new admins.");
+    }
+  }
+
+  // check if admin already exists
+  const admin = await Admin.findOne({ email });
+  if (admin) {
+    res.status(400);
+    throw new Error("Admin already exists with this email");
+  }
+
+  // hash the password
+  const hashedPassword = await bcrypt.hash(password, 10);
+  // create new admin
+  const newAdmin = new Admin({
+    name,
+    email,
+    phone,
+    password: hashedPassword,
+  });
+  await newAdmin.save();
+  
+  const adminResponse = newAdmin.toObject();
+  delete adminResponse.password;
+
+  res.status(201).json({
+    success: true,
+    message: "Admin registered successfully",
+    admin: adminResponse,
+  });
 });
 
 const adminDashboard = asyncHandler(async (req, res) => {

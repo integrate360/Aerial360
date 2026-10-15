@@ -824,7 +824,18 @@ const updateUser = async (req, res) => {
 };
 const deleteUser = asyncHandler(async (req, res) => {
   try {
+    const isOwner = req.user && req.user._id.toString() === req.params.id;
+    const AdminModel = (await import("../models/adminModel.js")).default;
+    const isCallerAdmin = req.user && (await AdminModel.findById(req.user._id));
+
+    if (!isOwner && !isCallerAdmin) {
+      return res.status(403).json({ error: "Unauthorized. You can only delete your own account." });
+    }
+
     const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     res.send({ message: "User removed" });
   } catch (error) {
     res.status(400).send({ error: error.message });

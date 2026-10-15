@@ -1,10 +1,9 @@
 import axios from "axios";
 import { bearerHeader, formDataHeader } from "./Config.js";
 
-// export const api = "https://api.airbound.in/api/";
-// export const baseApi = "https://api.airbound.in/";
-export const api = "http://localhost:5000/api/";
-export const baseApi = "http://localhost:5000/";
+
+export const api = "http://localhost:6000/api/";
+export const baseApi = "http://localhost:6000/";
 export const getBearerHeader = () => {
   const token = localStorage.getItem("token");
   return {
@@ -24,8 +23,6 @@ export const getFormDataHeader = () => {
     },
   };
 };
-// export const api = "https://api.airbound.in/api/";
-// export const baseApi = "https://api.airbound.in/";
 export const imageApi = "";
 
 export const getCategories = async () => {
@@ -444,13 +441,13 @@ export const updateBookingPartialAmount = async (bookingId, paymentAmount) => {
   }
 };
 
-export const updateUserPackagePartialPaymnet = async (
+export const updateUserPackagePartialPayment = async (
   userPackageId,
   paymentAmount,
 ) => {
   try {
     const response = await axios.put(
-      `${api}/update-user-package-partial-payment`,
+      `${api}update-user-package-partial-payment`,
       { userPackageId, paymentAmount },
       bearerHeader,
     );
@@ -460,6 +457,8 @@ export const updateUserPackagePartialPaymnet = async (
     return {};
   }
 };
+
+export const updateUserPackagePartialPaymnet = updateUserPackagePartialPayment;
 
 export const deleteBooking = async (id) => {
   try {

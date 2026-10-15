@@ -18,106 +18,10 @@ const razorpay = new Razorpay({
 const formatTimeForInvoice = (time) => {
   if (!time) return 'N/A';
   if (Array.isArray(time)) {
-    return time.join(', ');  // Convert array to comma-separated string
+    return time.join(', ');  
   }
   return String(time);
 };
-// Dont delete above code yet, we will need it for reference
-
-// const createPackageOrder = AsyncHandler(async (req, res) => {
-//   const { packageId, user, amount, bookings } = req.body;
-
-//   if (!user || !amount || !bookings || !Array.isArray(bookings) || bookings.length === 0) {
-//     return res.status(400).json({ message: "Package, user, and bookings are required" });
-//   }
-
-//   const UniqueId = uuid();
-
-//   // 1️⃣ Validate Package and User
-//   const packageExists = await PackageM.findById(packageId);
-//   if (!packageExists) return res.status(404).json({ message: "Package not found" });
-
-//   const userExists = await User.findById(user);
-//   if (!userExists) return res.status(404).json({ message: "User not found" });
-
-//   // 2️⃣ Calculate remaining slots across all previous UserPackages for this user & package
-//   const totalSlots = packageExists.days || 0;
-//   const totalBookedAgg = await UserPackagesM.aggregate([
-//     { $match: { user: userExists._id, package: packageExists._id } },
-//     { $group: { _id: null, bookedSlots: { $sum: "$slots" } } },
-//   ]);
-//   const alreadyBooked = totalBookedAgg[0]?.bookedSlots || 0;
-//   const newToBook = bookings.length;
-//   const remaining = totalSlots - alreadyBooked;
-
-//   if (newToBook > remaining) {
-//     return res.status(400).json({
-//       success: false,
-//       message: `You can only book ${remaining} more slot(s) for this package.`,
-//     });
-//   }
-
-//   // 3️⃣ Create Razorpay Order
-//   const options = {
-//     amount: Math.round(amount * 100), // in paise
-//     currency: "INR",
-//     receipt: `pkg_${UniqueId}`,
-//   };
-//   const order = await razorpay.orders.create(options);
-
-//   // 4️⃣ Create pending Payment
-//   const payment = await Payment.create({
-//     package: packageId,
-//     user,
-//     amount,
-//     isPackage: true,
-//     razorpay_order_id: order.id,
-//     paymentStatus: "created",
-//   });
-
-//   // 5️⃣ Create Bookings
-//   const bookingIds = [];
-//   for (const book of bookings) {
-//     const newBooking = await Booking.create({
-//       ...book,
-//       user,
-//       class: book?.classId,
-//       dates: [book?.date],
-//       location: book?.location?._id,
-//       time: book?.time,
-//       duration: book?.classDuration,
-//       package: packageId,
-//       uuid: UniqueId,
-//       paymentStatus: "created",
-//       razorpay_order_id: order.id,
-//     });
-//     bookingIds.push(newBooking._id);
-//   }
-
-//   // 6️⃣ Create a new UserPackage for EVERY purchase
-//   await UserPackagesM.create({
-//     uuid: UniqueId,
-//     bookings: bookingIds,
-//     package: packageId,
-//     price: amount,
-//     slots: bookingIds.length, // booked count for this purchase
-//     totalSlots: totalSlots,   // max limit from package
-//     user,
-//     paymentStatus: "created",
-//     razorpay_order_id: order.id,
-//   });
-
-//   // 7️⃣ Respond with order details
-//   res.status(201).json({
-//     success: true,
-//     orderId: order.id,
-//     amount: order.amount,
-//     currency: order.currency,
-//     paymentId: payment._id,
-//   });
-// });
-
-// Dont delete above code yet, we will need it for reference
 
 const createPackageOrder = AsyncHandler(async (req, res) => {
   const { packageId, user, amount, bookings } = req.body;
@@ -148,6 +52,12 @@ const createPackageOrder = AsyncHandler(async (req, res) => {
   const userExists = await User.findById(user);
   console.log("User exists:", userExists);
   if (!userExists) return res.status(404).json({ message: "User not found" });
+
+  // Securely calculate server-side package price
+  const finalAmount =
+    packageExists.offerPrice && Number(packageExists.offerPrice) > 0
+      ? Number(packageExists.offerPrice)
+      : Number(packageExists.price);
 
   // 2️⃣ Validate bookings count doesn't exceed package limit
   const totalSlots = packageExists.days || 0;
@@ -184,9 +94,9 @@ const createPackageOrder = AsyncHandler(async (req, res) => {
     }
   }
 
-  // 3️⃣ Create Razorpay Order
+  // 3️⃣ Create Razorpay Order with server-calculated price
   const options = {
-    amount: Math.round(amount * 100),
+    amount: Math.round(finalAmount * 100),
     currency: "INR",
     receipt: `pkg_${UniqueId}`,
   };
@@ -197,7 +107,7 @@ const createPackageOrder = AsyncHandler(async (req, res) => {
   const payment = await Payment.create({
     package: packageId,
     user,
-    amount,
+    amount: finalAmount,
     isPackage: true,
     razorpay_order_id: order.id,
     paymentStatus: "created",
@@ -456,96 +366,6 @@ const verifyWebhook = AsyncHandler(async (req, res) => {
     );
   }
 
-  // if (event === "payment.failed") {
-  //     const paymentData = req.body.payload.payment.entity;
-
-  //     await Payment.findOneAndUpdate(
-  //         { razorpay_order_id: paymentData.order_id },
-  //         { razorpay_payment_id: paymentData.id, paymentStatus: "failed" }
-  //     );
-
-  //     await Booking.updateMany(
-  //         { razorpay_order_id: paymentData.order_id },
-  //         { $set: { razorpay_payment_id: paymentData.id, paymentStatus: "failed" } }
-  //     );
-
-  //     await UserPackagesM.updateMany(
-  //         { razorpay_order_id: paymentData.order_id },
-  //         { $set: { razorpay_payment_id: paymentData.id, paymentStatus: "failed" } }
-  //     );
-  // }
-  // // Refund Events
-  // if (event === "refund.created") {
-  //     const refundData = req.body.payload.refund.entity;
-  //     const orderId = refundData.payment_id; // Note: refunds have payment_id instead of order_id
-
-  //     await Payment.findOneAndUpdate(
-  //         { razorpay_payment_id: orderId },
-  //         { paymentStatus: "refund_initiated" }
-  //     );
-
-  //     await Booking.updateMany(
-  //         { razorpay_payment_id: orderId },
-  //         { $set: { paymentStatus: "refund_initiated" } }
-  //     );
-
-  //     await UserPackagesM.updateMany(
-  //         { razorpay_payment_id: orderId },
-  //         { $set: { paymentStatus: "refund_initiated" } }
-  //     );
-  // }
-
-  // if (event === "refund.processed") {
-  //     const refundData = req.body.payload.refund.entity;
-  //     const orderId = refundData.payment_id;
-
-  //     await Payment.findOneAndUpdate(
-  //         { razorpay_payment_id: orderId },
-  //         { paymentStatus: "refunded" }
-  //     );
-
-  //     await Booking.updateMany(
-  //         { razorpay_payment_id: orderId },
-  //         { $set: { paymentStatus: "refunded" } }
-  //     );
-
-  //     await UserPackagesM.updateMany(
-  //         { razorpay_payment_id: orderId },
-  //         { $set: { paymentStatus: "refunded" } }
-  //     );
-  // }
-
-  // if (event === "refund.failed") {
-  //     const refundData = req.body.payload.refund.entity;
-  //     const orderId = refundData.payment_id;
-
-  //     await Payment.findOneAndUpdate(
-  //         { razorpay_payment_id: orderId },
-  //         { paymentStatus: "refund_failed" }
-  //     );
-
-  //     await Booking.updateMany(
-  //         { razorpay_payment_id: orderId },
-  //         { $set: { paymentStatus: "refund_failed" } }
-  //     );
-
-  //     await UserPackagesM.updateMany(
-  //         { razorpay_payment_id: orderId },
-  //         { $set: { paymentStatus: "refund_failed" } }
-  //     );
-  // }
-
-  // if (event === "refund.speed_changed") {
-  //     const refundData = req.body.payload.refund.entity;
-  //     const orderId = refundData.payment_id;
-
-  //     // Optional: Update status based on speed change
-  //     // await Payment.findOneAndUpdate(
-  //     //   { razorpay_payment_id: orderId },
-  //     //   { refundSpeed: refundData.speed_processed }
-  //     // );
-  // }
-
   res.json({ status: "ok" });
 });
 
@@ -577,9 +397,18 @@ const createClassOrder = AsyncHandler(async (req, res) => {
   const userExists = await User.findById(userId);
   if (!userExists) return res.status(404).json({ message: "User not found" });
 
+  // Calculate actual price securely on server
+  const unitPrice =
+    classExists.offerPrice && !isNaN(Number(classExists.offerPrice)) && Number(classExists.offerPrice) > 0
+      ? Number(classExists.offerPrice)
+      : Number(classExists.price);
+  const numPeople = Number(people) > 0 ? Number(people) : 1;
+  const numDates = Array.isArray(dates) ? dates.length : 1;
+  const finalAmount = unitPrice * numPeople * numDates;
+
   // 1️⃣ Create Razorpay Order
   const options = {
-    amount: Math.round(amount * 100), // convert to paise
+    amount: Math.round(finalAmount * 100), // convert to paise
     currency: "INR",
     receipt: `cls_${UniqueId}`,
   };
@@ -590,7 +419,7 @@ const createClassOrder = AsyncHandler(async (req, res) => {
   const payment = await Payment.create({
     class: classId,
     user: userId,
-    amount,
+    amount: finalAmount,
     isPackage: false, // Explicitly false for class
     razorpay_order_id: order.id,
     paymentStatus: "created",
@@ -606,7 +435,7 @@ const createClassOrder = AsyncHandler(async (req, res) => {
     duration,
     people,
     uuid: UniqueId,
-    amount,
+    amount: finalAmount,
     paymentStatus: "created",
     razorpay_order_id: order.id,
   });

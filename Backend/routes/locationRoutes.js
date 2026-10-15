@@ -8,8 +8,11 @@ import {
   Delete,
 } from "../controllers/locationController.js";
 
+import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
+
 // Get all locations
 router.get("/allocations", all);
+router.get("/locations", all);
 
 // Get a single location by ID
 router.get("/locations/:id", getLocation, (req, res) => {
@@ -17,12 +20,12 @@ router.get("/locations/:id", getLocation, (req, res) => {
 });
 
 // Create a new location
-router.post("/locations", Create);
+router.post("/locations", authMiddleware, isAdmin, Create);
 
 // Update a location by ID
-router.put("/locations/:id", getLocation, Update);
+router.put("/locations/:id", authMiddleware, isAdmin, getLocation, Update);
 
 // Delete a location by ID
-router.delete("/locations/:id", Delete);
+router.delete("/locations/:id", authMiddleware, isAdmin, Delete);
 
 export default router;
