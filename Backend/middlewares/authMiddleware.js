@@ -29,9 +29,11 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
         throw new Error("Invalid Token");
       }
     } else {
+      res.status(401);
       throw new Error("Invalid Token");
     }
   } else {
+    res.status(401);
     throw new Error("You don't have a token to access this route");
   }
 });
@@ -39,7 +41,10 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
 const isAdmin = asyncHandler(async (req, res, next) => {
   const isAdmin = await Admin.findById(req?.user?._id);
   if (isAdmin) next();
-  else throw new Error("Not Authozired");
+  else {
+    res.status(403);
+    throw new Error("Not Authorized");
+  }
 });
 
 const optionalAuth = asyncHandler(async (req, res, next) => {

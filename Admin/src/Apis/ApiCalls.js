@@ -5,6 +5,19 @@ import { bearerHeader, formDataHeader } from "./Config.js";
 export const api = "http://localhost:5050/api/";
 export const baseApi = "http://localhost:5050/";
 
+// Automatically attach Authorization token to all outgoing requests
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token && !config.headers?.Authorization) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 // Handle expired or invalid session tokens automatically
 axios.interceptors.response.use(
   (response) => response,
@@ -363,6 +376,7 @@ export const getAllUsers = async () => {
 export const getAllUsersForAdmin = async (page = 1, search = "") => {
   try {
     const cats = await axios.get(`${api}getAllUsersforadmin`, {
+      ...getBearerHeader(),
       params: {
         page,
         limit: 10,
@@ -387,6 +401,7 @@ export const deleteUser = async (id) => {
     return { status: 300 };
   }
 };
+
 export const updateUser = async (id, payload) => {
   try {
     const response = await axios.put(
@@ -917,7 +932,7 @@ export const getAllAppVersions = async () => {
   return response.data;
 };
 export const getAdminDashBoard = async () => {
-  const response = await axios.get(`${api}admin/dashboard/super`);
+  const response = await axios.get(`${api}admin/dashboard/super`, getBearerHeader());
   return response.data;
 };
 
