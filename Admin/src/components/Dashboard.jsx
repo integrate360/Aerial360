@@ -334,7 +334,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={200}>
               <AreaChart
                 data={
                   activeChart === "revenue" ? revenueChartData : userGrowthData
@@ -390,7 +390,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={200}>
               <RechartsPieChart>
                 <Pie
                   data={packageRevenueData}

@@ -234,6 +234,7 @@ const BookingsTable = ({
     });
   }, [flattenedBookings, fromDate, toDate, search, localSearch, setSearch]);
 
+  const currentSearch = (setSearch ? search : localSearch) || "";
   const activePage = page || 1;
   const activeLimit = limit || 10;
   const totalRecords = pagination?.total || flattenedBookings?.length || 0;
@@ -707,25 +708,25 @@ const BookingsTable = ({
           <div className="text-center py-12">
             <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-500">
-              {searchQuery ||
+              {currentSearch ||
               fromDate ||
               toDate !== moment().add(7, "days").format("YYYY-MM-DD")
                 ? "No bookings match your search/filters"
                 : "No bookings found"}
             </p>
             <p className="text-sm text-gray-400 mt-1">
-              {searchQuery ||
+              {currentSearch ||
               fromDate ||
               toDate !== moment().add(7, "days").format("YYYY-MM-DD")
                 ? "Try adjusting your search or filters"
                 : "Try adjusting your filters"}
             </p>
-            {(searchQuery ||
+            {(currentSearch ||
               fromDate ||
               toDate !== moment().add(7, "days").format("YYYY-MM-DD")) && (
               <button
                 onClick={() => {
-                  setSearchQuery("");
+                  clearSearch();
                   setFromDate(
                     moment()
                       .add(-7, "days")

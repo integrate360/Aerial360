@@ -2,8 +2,8 @@ import axios from "axios";
 import { bearerHeader, formDataHeader } from "./Config.js";
 
 
-export const api = "http://localhost:6000/api/";
-export const baseApi = "http://localhost:6000/";
+export const api = "http://localhost:5050/api/";
+export const baseApi = "http://localhost:5050/";
 export const getBearerHeader = () => {
   const token = localStorage.getItem("token");
   return {
