@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Environment and secrets
+.env
+.env.*
+config/service-account-key.json
+service-account-key.json
+
+# Logs
+logs/
+*.log
