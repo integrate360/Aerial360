@@ -281,7 +281,7 @@ const BookingsTable = ({
       setIsDeleting(false);
     }
   };
-  console.log(selectedBooking, "fdkjhg");
+
   const confirmDelete = (id) => {
     setBookingToDelete(id);
     setShowDeleteModal(true);

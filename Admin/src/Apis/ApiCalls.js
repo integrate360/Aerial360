@@ -4,6 +4,20 @@ import { bearerHeader, formDataHeader } from "./Config.js";
 
 export const api = "http://localhost:5050/api/";
 export const baseApi = "http://localhost:5050/";
+
+// Handle expired or invalid session tokens automatically
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 export const getBearerHeader = () => {
   const token = localStorage.getItem("token");
   return {
@@ -501,7 +515,12 @@ export const getBookings = async (params = {}) => {
     };
   } catch (error) {
     console.log(error);
-    return { data: [], pagination: { total: 0, page: 1, totalPages: 1 } };
+    return {
+      data: [],
+      pagination: { total: 0, page: 1, totalPages: 1 },
+      status: error?.response?.status || 500,
+      message: error?.response?.data?.message || "Failed to fetch bookings",
+    };
   }
 };
 

@@ -285,8 +285,8 @@ const TopCards = () => {
               </button>
             </div>
           </div>
-          <div className="h-56 sm:h-72">
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={200}>
+          <div className="w-full h-56 sm:h-72 min-h-[224px] min-w-0">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={200} debounce={50}>
               <AreaChart
                 data={
                   activeChart === "revenue" ? revenueChartData : userGrowthData
@@ -348,8 +348,8 @@ const TopCards = () => {
               </p>
             </div>
           </div>
-          <div className="h-56 sm:h-72">
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={200}>
+          <div className="w-full h-56 sm:h-72 min-h-[224px] min-w-0">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={200} debounce={50}>
               <RechartsPieChart>
                 <Pie
                   data={packageRevenueData}
