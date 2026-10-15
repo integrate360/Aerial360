@@ -356,9 +356,9 @@ const SignUp = () => {
             disabled={isSubmitting}
           >
             <LinearGradient
-              colors={[Colors.secondary, Colors.secondary]}
+              colors={[Colors.primary, Colors.secondary]}
               start={{ x: 0.0, y: 0.0 }}
-              end={{ x: 0.5, y: 1.0 }}
+              end={{ x: 1.0, y: 1.0 }}
               style={styles.gradient}
             >
               {isSubmitting ? (
@@ -370,11 +370,11 @@ const SignUp = () => {
           </TouchableOpacity>
 
           <View style={styles.footer}>
-            <Text style={{ color: 'black', fontFamily: fonts.regular }}>
+            <Text style={{ color: '#1A1D25', fontFamily: fonts.regular }}>
               Already A Member? &nbsp;
             </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text style={{ color: 'blue', fontFamily: fonts.regular }}>
+              <Text style={{ color: Colors.secondary, fontWeight: 'bold', fontFamily: fonts.regular }}>
                 Sign in
               </Text>
             </TouchableOpacity>
@@ -382,7 +382,7 @@ const SignUp = () => {
           <View style={styles.footer}>
             <TouchableOpacity
               onPress={() => navigation.navigate('BottomNavigation')}>
-              <Text style={{ color: 'blue', fontFamily: fonts.regular }}>
+              <Text style={{ color: Colors.primary, fontFamily: fonts.regular }}>
                 Skip For Now
               </Text>
             </TouchableOpacity>

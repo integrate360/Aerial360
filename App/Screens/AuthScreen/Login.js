@@ -330,9 +330,9 @@ const Login = () => {
               >
                 <LinearGradient
                   style={styles.loginButton}
-                  colors={[Colors.secondary, Colors.secondary]}
-                  start={{ x: 0.1, y: 1.0 }}
-                  end={{ x: 0.5, y: 1.0 }}>
+                  colors={[Colors.primary, Colors.secondary]}
+                  start={{ x: 0.0, y: 0.0 }}
+                  end={{ x: 1.0, y: 1.0 }}>
                   {isSubmitting ? (
                     <Text style={styles.buttonText}>Logging in...</Text>
                   ) : (
@@ -341,11 +341,11 @@ const Login = () => {
                 </LinearGradient>
               </TouchableOpacity>
               <View style={styles.registerContainer}>
-                <Text style={{ color: 'black', fontFamily: fonts.regular }}>
+                <Text style={{ color: '#1A1D25', fontFamily: fonts.regular }}>
                   Don't have an Account? &nbsp;
                 </Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                  <Text style={{ color: 'blue', fontFamily: fonts.regular }}>
+                  <Text style={{ color: Colors.secondary, fontWeight: 'bold', fontFamily: fonts.regular }}>
                     Register
                   </Text>
                 </TouchableOpacity>
@@ -353,7 +353,7 @@ const Login = () => {
               <View style={styles.registerContainer}>
                 <TouchableOpacity
                   onPress={() => navigation.navigate('BottomNavigation')}>
-                  <Text style={{ color: 'blue', fontFamily: fonts.regular }}>
+                  <Text style={{ color: Colors.primary, fontFamily: fonts.regular }}>
                     Skip For Now
                   </Text>
                 </TouchableOpacity>

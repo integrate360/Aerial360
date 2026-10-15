@@ -9,7 +9,11 @@ import {
 import {Card} from 'react-native-paper';
 import {getAllAds} from './Api/Allapi';
 import {useNavigation} from '@react-navigation/native';
+import {Colors} from './Config/Config';
+
 const {width, height} = Dimensions.get('window');
+const CARD_WIDTH = width * 0.88;
+const SPACING = width * 0.02;
 
 const CardUI = () => {
   const [data, setData] = useState([]);
@@ -18,34 +22,46 @@ const CardUI = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    getAllAds().then(res => setData(res));
+    getAllAds(true).then(res => {
+      if (Array.isArray(res) && res.length > 0) {
+        setData(res);
+      }
+    });
   }, []);
 
   useEffect(() => {
+    if (!data || data.length <= 1) return;
+
     const interval = setInterval(() => {
-      if (data?.length > 0) {
-        const nextIndex = (currentIndex + 1) % data?.length;
-        setCurrentIndex(nextIndex);
+      const nextIndex = (currentIndex + 1) % data.length;
+      setCurrentIndex(nextIndex);
+      if (flatListRef.current) {
         flatListRef.current.scrollToIndex({index: nextIndex, animated: true});
       }
-    }, 3000); // Adjust the scroll interval (in ms)
+    }, 4000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
   }, [currentIndex, data]);
 
-  const onViewableItemsChanged = ({viewableItems}) => {
-    if (viewableItems.length > 0) {
+  const onViewableItemsChanged = useRef(({viewableItems}) => {
+    if (viewableItems && viewableItems.length > 0) {
       setCurrentIndex(viewableItems[0].index);
     }
-  };
+  }).current;
+
+  if (!data || data.length === 0) {
+    return null;
+  }
 
   const renderItem = ({item}) => (
     <Card style={styles.card}>
       <TouchableOpacity
-        // onPress={() =>
-        //   navigation.navigate('CalendarDetails', {item: item?.class})
-        // }
-        >
+        activeOpacity={0.92}
+        onPress={() => {
+          if (item?.class) {
+            navigation.navigate('CalendarDetails', {item: item.class});
+          }
+        }}>
         <Card.Cover
           source={{uri: item.image}}
           style={styles.image}
@@ -61,68 +77,79 @@ const CardUI = () => {
         ref={flatListRef}
         data={data}
         renderItem={renderItem}
-        keyExtractor={item => item?._id} // Assuming _id is the unique identifier
+        keyExtractor={item => item?._id || String(Math.random())}
         horizontal
         showsHorizontalScrollIndicator={false}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{viewAreaCoveragePercentThreshold: 50}}
-        // Use `getItemLayout` to improve performance when using `scrollToIndex`
+        snapToInterval={CARD_WIDTH + SPACING * 2}
+        decelerationRate="fast"
+        contentContainerStyle={styles.flatListContent}
         getItemLayout={(data, index) => ({
-          length: width * 0.7, // Card width
-          offset: width * 0.7 * index, // Card width * index
+          length: CARD_WIDTH + SPACING * 2,
+          offset: (CARD_WIDTH + SPACING * 2) * index,
           index,
         })}
       />
-      <View style={styles.dotContainer}>
-        {data?.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.dot,
-              currentIndex === index ? styles.activeDot : styles.inactiveDot,
-            ]}
-          />
-        ))}
-      </View>
+      {data.length > 1 && (
+        <View style={styles.dotContainer}>
+          {data.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                currentIndex === index ? styles.activeDot : styles.inactiveDot,
+              ]}
+            />
+          ))}
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 10,
-    paddingHorizontal: 2,
+    paddingVertical: 6,
+  },
+  flatListContent: {
+    paddingHorizontal: width * 0.04,
   },
   card: {
-    marginHorizontal: width * 0.02,
-    width: width * 0.7, // Set width to 70% of screen width
-    height: height * 0.2, // Set height to 25% of screen height
-    borderRadius: 12,
+    marginHorizontal: SPACING,
+    width: CARD_WIDTH,
+    height: height * 0.22,
+    borderRadius: 16,
     elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
     overflow: 'hidden',
-    marginBottom: 10,
+    backgroundColor: '#fff',
   },
   image: {
-    width: '100%', // Ensure the image fills the card's width
-    height: '100%', // Ensure the image fills the card's height
+    width: '100%',
+    height: '100%',
   },
   dotContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 15,
+    alignItems: 'center',
+    marginTop: 10,
   },
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 5,
-    marginHorizontal: 1.5,
-    bottom: 5,
+    height: 6,
+    borderRadius: 3,
+    marginHorizontal: 3,
   },
   activeDot: {
-    backgroundColor: 'black',
+    width: 20,
+    backgroundColor: Colors.secondary,
   },
   inactiveDot: {
-    backgroundColor: '#777',
+    width: 6,
+    backgroundColor: '#D1D5DB',
   },
 });
 

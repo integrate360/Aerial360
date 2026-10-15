@@ -109,7 +109,7 @@ export default function Sidebar() {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
                     isActive
-                      ? "bg-gradient-to-r from-[#0D47A1] to-[#5472D3] text-white shadow-md"
+                      ? "bg-gradient-to-r from-[#3B1E82] to-[#7C3AED] text-white shadow-md"
                       : "text-[#1A1D25] hover:bg-[#F5F7FA]"
                   }`
                 }
@@ -121,11 +121,11 @@ export default function Sidebar() {
                       className={
                         isActive
                           ? "text-white"
-                          : "text-[#5472D3] group-hover:text-[#0D47A1]"
+                          : "text-[#7C3AED] group-hover:text-[#3B1E82]"
                       }
                     />
                     <span
-                      className={`font-medium text-sm ${isActive ? "text-white" : "group-hover:text-[#0D47A1]"}`}
+                      className={`font-medium text-sm ${isActive ? "text-white" : "group-hover:text-[#3B1E82]"}`}
                     >
                       {item.name}
                     </span>
@@ -156,7 +156,7 @@ export default function Sidebar() {
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
                         isActive
-                          ? "bg-gradient-to-r from-[#0D47A1] to-[#5472D3] text-white shadow-md"
+                          ? "bg-gradient-to-r from-[#3B1E82] to-[#7C3AED] text-white shadow-md"
                           : "text-[#1A1D25] hover:bg-[#F5F7FA]"
                       }`
                     }
@@ -168,11 +168,11 @@ export default function Sidebar() {
                           className={
                             isActive
                               ? "text-white"
-                              : "text-[#5472D3] group-hover:text-[#0D47A1]"
+                              : "text-[#7C3AED] group-hover:text-[#3B1E82]"
                           }
                         />
                         <span
-                          className={`font-medium text-sm ${isActive ? "text-white" : "group-hover:text-[#0D47A1]"}`}
+                          className={`font-medium text-sm ${isActive ? "text-white" : "group-hover:text-[#3B1E82]"}`}
                         >
                           {item.name}
                         </span>

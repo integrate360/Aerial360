@@ -14,7 +14,7 @@ export const PaymentGetwayOpne = () => {
         contact: '7045904102',
         name: 'Mehul',
       },
-      theme: {color: '#1A0E7D'},
+      theme: {color: '#3B1E82'},
     };
 
     RazorpayCheckout.open(options)

@@ -80,7 +80,7 @@ const Login = () => {
                 className="w-full h-full object-cover"
               />
               {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#0D47A1]/95 via-[#0D47A1]/90 to-[#5472D3]/85"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1E1045]/95 via-[#3B1E82]/90 to-[#7C3AED]/85"></div>
             </div>
 
             <div className="relative z-10 flex flex-col justify-center items-center w-full p-12 text-white">
@@ -189,7 +189,7 @@ const Login = () => {
             <div className="w-full max-w-md">
               {/* Mobile Logo */}
               <div className="lg:hidden text-center mb-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-[#0D47A1] to-[#5472D3] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#3B1E82] to-[#7C3AED] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="none"
@@ -312,7 +312,7 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="group w-full bg-gradient-to-r from-[#0D47A1] to-[#5472D3] text-white font-semibold py-3.5 rounded-lg hover:from-[#0D47A1] hover:to-[#0D47A1] focus:outline-none focus:ring-2 focus:ring-[#5472D3] focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="group w-full bg-gradient-to-r from-[#3B1E82] to-[#7C3AED] text-white font-semibold py-3.5 rounded-lg hover:from-[#2E1065] hover:to-[#6D28D9] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
