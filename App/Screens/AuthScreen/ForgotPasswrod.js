@@ -184,25 +184,26 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
 
   header: {
-    height: height * 0.35,
+    height: height * 0.28,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: height * 0.03,
   },
 
   logo: {
-    width: '100%',
-    height: '120%',
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
+    width: width * 0.5,
+    height: height * 0.22,
+    resizeMode: 'contain',
   },
 
   card: {
     backgroundColor: '#fff',
     borderRadius: 30,
     padding: 20,
-    elevation: 5,
-    marginTop: -10,
+    elevation: 4,
+    marginTop: 0,
     marginHorizontal: width * 0.05,
+    marginBottom: 20,
   },
 
   formContainer: {
