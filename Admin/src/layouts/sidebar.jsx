@@ -77,7 +77,7 @@ export default function Sidebar() {
                   />
                 </div>
                 <div className="hidden sm:block">
-                  <h1 className="text-xl font-bold text-[#1A1D25]">Airbound</h1>
+                  <h1 className="text-xl font-bold text-[#1A1D25]">Aerial360</h1>
                 </div>
               </div>
             </div>

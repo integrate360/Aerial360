@@ -21,19 +21,19 @@ const faqData = [
     items: [
       {
         id: '1-1',
-        title: 'What is Airbound Academy?',
+        title: 'What is Aerial360 Academy?',
         description:
-          "Airbound Academy is India's first dedicated Aerial and Pole Dance/Fitness Academy, offering professional training in aerial arts such as hoop, silks, slings, trapeze, flying pole, spiral, and rope.",
+          "Aerial360 Academy is India's first dedicated Aerial and Pole Dance/Fitness Academy, offering professional training in aerial arts such as hoop, silks, slings, trapeze, flying pole, spiral, and rope.",
       },
       {
         id: '1-2',
-        title: 'Where is Airbound Academy located?',
+        title: 'Where is Aerial360 Academy located?',
         description:
           'We have our flagship studio in [City/Location], and we occasionally host workshops in other cities.',
       },
       {
         id: '1-3',
-        title: 'Who can join Airbound?',
+        title: 'Who can join Aerial360?',
         description:
           'We welcome all ages and fitness levels, from complete beginners to professional aerialists.',
       },

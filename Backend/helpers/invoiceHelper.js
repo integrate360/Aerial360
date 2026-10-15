@@ -29,7 +29,7 @@ const addCompanyDetails = (doc) => {
     .fontSize(12)
     .fillColor("black")
     .font("Helvetica-Bold")
-    .text("Airbound", 70, boxStart + 15)
+    .text("Aerial360", 70, boxStart + 15)
     .font("Helvetica")
     .fontSize(10)
     .text("2nd floor Empressa,", 70, boxStart + 35)

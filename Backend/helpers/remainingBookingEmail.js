@@ -168,7 +168,7 @@ const sendMultipleBookingsEmail = async (user, bookings) => {
     <body>
       <div class="email-container">
         <div class="header">
-          <div class="logo">Airbound Fitness</div>
+          <div class="logo">Aerial360 Academy</div>
           <h1>Bookings Confirmed</h1>
         </div>
         
@@ -260,12 +260,12 @@ const sendMultipleBookingsEmail = async (user, bookings) => {
 
           <p>
             Best regards,<br>
-            <strong>Airbound Fitness Team</strong>
+            <strong>Aerial360 Team</strong>
           </p>
         </div>
         
         <div class="footer">
-          <div>Airbound Fitness | airboundfitness@gmail.com</div>
+          <div>Aerial360 Fitness & Arts Academy</div>
         </div>
       </div>
     </body>
@@ -285,7 +285,7 @@ const sendMultipleBookingsEmail = async (user, bookings) => {
     <body>
       <div class="email-container">
         <div class="header">
-          <div class="logo">Airbound Fitness Admin</div>
+          <div class="logo">Aerial360 Admin</div>
           <h1>Multiple Bookings Created</h1>
         </div>
         
@@ -408,8 +408,8 @@ const sendMultipleBookingsEmail = async (user, bookings) => {
       location: booking.location?.address || "",
       status: "CONFIRMED",
       organizer: {
-        name: "Airbound Fitness",
-        email: "airboundfitness@gmail.com",
+        name: "Aerial360 Academy",
+        email: "contact@aerial360.in",
       },
       attendees: [{ name: user.name, email: user.email }],
     };
@@ -425,13 +425,13 @@ const sendMultipleBookingsEmail = async (user, bookings) => {
     // Send email to user with ICS attachment
     const userRawEmail = createRawEmailWithAttachment(
       user.email,
-      "Your Airbound Fitness Bookings Confirmed",
+      "Your Aerial360 Bookings Confirmed",
       userEmailContent,
       icsContent
     );
 
     const userParams = {
-      Source: "Airbound Fitness <airboundfitness@airbound.in>",
+      Source: "Aerial360 Academy <contact@aerial360.in>",
       Destinations: [user.email],
       RawMessage: {
         Data: userRawEmail,

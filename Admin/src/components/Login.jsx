@@ -94,7 +94,7 @@ const Login = () => {
               {/* Text Content */}
               <div className="text-center max-w-lg">
                 <h1 className="text-4xl xl:text-5xl font-bold mb-6 leading-tight">
-                  Admin Control Panel
+                  Aerial360 Admin Portal
                 </h1>
                 <p className="text-white/90 text-lg xl:text-xl leading-relaxed mb-12">
                   Manage bookings, users, services, and analytics from a single
@@ -211,7 +211,7 @@ const Login = () => {
                   </svg>
                 </div>
                 <h2 className="text-2xl font-bold text-[#1A1D25]">
-                  Admin Panel
+                  Aerial360 Admin
                 </h2>
                 <p className="text-gray-500 text-sm mt-1">
                   Management Dashboard

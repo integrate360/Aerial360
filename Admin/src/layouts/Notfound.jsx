@@ -91,10 +91,10 @@ export default function NotFound() {
                 src="/airbound.png"
                 width={50}
                 height={50}
-                alt="Airbound"
+                alt="Aerial360"
                 className="drop-shadow-lg"
               />
-              <h1 className="text-2xl font-bold text-white">Airbound</h1>
+              <h1 className="text-2xl font-bold text-white">Aerial360</h1>
             </div>
           </div>
 

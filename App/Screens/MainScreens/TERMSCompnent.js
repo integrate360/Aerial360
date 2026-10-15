@@ -36,7 +36,7 @@ const termsData = {
       id: 5,
       title: 'Dress Code & Lost Property Policy',
       description:
-        'Students must present themselves in a tidy manner at all times. Correct attires must always be worn. Students that are not dressed appropriately will not be allowed to take a class. If you have any questions regarding the dress code for a particular lesson, please ask the teacher or email ria.rbajaj@gmail.com. Airbound do not accept responsibility for items lost or stolen, although anything we do find will be placed in lost property.',
+        'Students must present themselves in a tidy manner at all times. Correct attires must always be worn. Students that are not dressed appropriately will not be allowed to take a class. If you have any questions regarding the dress code for a particular lesson, please ask the teacher or email contact@aerial360.in. Aerial360 does not accept responsibility for items lost or stolen, although anything we do find will be placed in lost property.',
     },
     {
       id: 6,
@@ -48,25 +48,25 @@ const termsData = {
       id: 7,
       title: 'Anti-Bullying Policy',
       description:
-        'Airbound recognize that every student has the right to enjoy a life free from bullying; therefore, we will always take seriously all allegations of bullying and are committed to deal with it effectively when it does happen.',
+        'Aerial360 recognizes that every student has the right to enjoy a life free from bullying; therefore, we will always take seriously all allegations of bullying and are committed to deal with it effectively when it does happen.',
     },
     {
       id: 8,
       title: 'Health and Safety',
       description:
-        'Airbound take seriously their responsibility to ensure the health and safety of all participants, teachers, and volunteers; and takes appropriate measures to make sure the environment is safe for all. Dance is an active engagement as any sport, and whilst every effort is made to avoid them, injuries can happen. The school accepts no responsibility for injuries sustained via any means other than a teacher’s negligence.',
+        'Aerial360 takes seriously their responsibility to ensure the health and safety of all participants, teachers, and volunteers; and takes appropriate measures to make sure the environment is safe for all. Dance is an active engagement as any sport, and whilst every effort is made to avoid them, injuries can happen. The school accepts no responsibility for injuries sustained via any means other than a teacher’s negligence.',
     },
     {
       id: 9,
       title: 'Appropriate Physical Contact Policy',
       description:
-        'Teaching dance is a physical activity and appropriate physical contact between students and teachers in class is essential to training. Airbound recognize that such physical contact is a potentially complex area, and the company also fully recognizes its responsibilities for safeguarding students and teachers and for protecting their welfare.',
+        'Teaching dance is a physical activity and appropriate physical contact between students and teachers in class is essential to training. Aerial360 recognizes that such physical contact is a potentially complex area, and the company also fully recognizes its responsibilities for safeguarding students and teachers and for protecting their welfare.',
     },
     {
       id: 10,
       title: 'Media Use Rights Permission',
       description:
-        'We ask parents/guardians to grant permission for Airbound to take photographs and videos of the students. No personal information is ever used or linked to the photographs. We ask for full rights to use the images resulting from the photography/video filming, and any reproductions or adaptations of the images for fundraising, publicity or other purposes.',
+        'We ask parents/guardians to grant permission for Aerial360 to take photographs and videos of the students. No personal information is ever used or linked to the photographs. We ask for full rights to use the images resulting from the photography/video filming, and any reproductions or adaptations of the images for fundraising, publicity or other purposes.',
     },
     {
       id: 11,

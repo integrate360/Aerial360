@@ -209,8 +209,8 @@ const HeaderComponent = ({
           <Image
             source={require('../../assets/AirbLogo.png')}
             style={{
-              width: isTablet ? width * 0.15 : width * 0.25,
-              height: isTablet ? height * 0.06 : height * 0.05,
+              width: isTablet ? width * 0.28 : width * 0.46,
+              height: isTablet ? height * 0.07 : height * 0.06,
               resizeMode: 'contain',
               marginLeft: width * 0.02,
             }}
@@ -279,8 +279,9 @@ const HeaderComponent = ({
               <Image
                 source={require('../../assets/Airbound-Logo-.png')}
                 style={{
-                  width: '100%',
-                  height: '100%',
+                  width: '85%',
+                  height: '85%',
+                  resizeMode: 'contain',
                 }}
               />
             </View>
@@ -289,7 +290,7 @@ const HeaderComponent = ({
               icon="close"
               size={30}
               style={styles.drawerCloseButton}
-              iconColor="#fff"
+              iconColor="#1A0E7D"
               onPress={closeDrawer}
             />
 

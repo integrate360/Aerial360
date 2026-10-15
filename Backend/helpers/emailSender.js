@@ -154,7 +154,7 @@ const sendEmailToUser = async (user, newDates, classBody) => {
     <body>
       <div class="email-container">
         <div class="header">
-          <div class="logo">Airbound Fitness</div>
+          <div class="logo">Aerial360 Academy</div>
           <h1>Class Rescheduled</h1>
         </div>
         
@@ -213,12 +213,12 @@ const sendEmailToUser = async (user, newDates, classBody) => {
 
           <p>
             Best regards,<br>
-            <strong>Airbound Fitness Team</strong>
+            <strong>Aerial360 Team</strong>
           </p>
         </div>
         
         <div class="footer">
-          <div>Airbound Fitness | airboundfitness@gmail.com</div>
+          <div>Aerial360 Fitness & Arts Academy</div>
         </div>
       </div>
     </body>
@@ -238,7 +238,7 @@ const sendEmailToUser = async (user, newDates, classBody) => {
     <body>
       <div class="email-container">
         <div class="header">
-          <div class="logo">Airbound Fitness Admin</div>
+          <div class="logo">Aerial360 Admin</div>
           <h1>Class Rescheduled</h1>
         </div>
         
@@ -340,8 +340,8 @@ const sendEmailToUser = async (user, newDates, classBody) => {
       location: classBody?.location || '',
       status: "CONFIRMED",
       organizer: {
-        name: "Airbound Fitness",
-        email: "airboundfitness@gmail.com",
+        name: "Aerial360 Academy",
+        email: "contact@aerial360.in",
       },
       attendees: [{ name: user.name, email: user.email }],
     };
@@ -357,13 +357,13 @@ const sendEmailToUser = async (user, newDates, classBody) => {
     // Send email to user with ICS attachment
     const userRawEmail = createRawEmailWithAttachment(
       user.email,
-      "Your Airbound Fitness Class Has Been Rescheduled",
+      "Your Aerial360 Class Has Been Rescheduled",
       userEmailContent,
       icsContent
     );
 
     const userParams = {
-      Source: "Airbound Fitness <airboundfitness@airbound.in>",
+      Source: "Aerial360 Academy <contact@aerial360.in>",
       Destinations: [user.email],
       RawMessage: {
         Data: userRawEmail
@@ -372,7 +372,7 @@ const sendEmailToUser = async (user, newDates, classBody) => {
 
     // Send email to admin (without attachment)
     const adminParams = {
-      Source: "Airbound Fitness <airboundfitness@airbound.in>",
+      Source: "Aerial360 Academy <contact@aerial360.in>",
       Destination: {
         ToAddresses: ["airboundfitness@gmail.com"]
       },

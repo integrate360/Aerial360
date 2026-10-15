@@ -6,15 +6,15 @@ export const PaymentGetwayOpne = () => {
       description: 'Credits towards consultation',
       image: 'https://i.imgur.com/3g7nmJC.jpg',
       currency: 'INR',
-      key: 'rzp_test_jJrpgdRcRVCYkA',
+      key: 'rzp_test_HdWdUGM3YBNvaQ',
       amount: 10 * 100,
-      name: 'Airbound',
+      name: 'Aerial360',
       prefill: {
         email: 'Mehul@gmail.com',
         contact: '7045904102',
         name: 'Mehul',
       },
-      theme: {color: '#53a20e'},
+      theme: {color: '#1A0E7D'},
     };
 
     RazorpayCheckout.open(options)
