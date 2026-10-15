@@ -1,6 +1,10 @@
 
-const { google } = require("googleapis");
-const path = require("path");
+import { google } from "googleapis";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const auth = new google.auth.GoogleAuth({
   keyFile: path.join(__dirname, "../config/airboundapp-146f2-7eba6638c5b9.json"), 
@@ -38,4 +42,4 @@ const addEventToGoogleCalendar = async (
   }
 };
 
-module.exports = { addEventToGoogleCalendar };
+export { addEventToGoogleCalendar };

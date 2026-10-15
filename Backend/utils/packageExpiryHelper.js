@@ -1,4 +1,4 @@
-const moment = require("moment");
+import moment from "moment";
 function getEffectivePackageExpiry(userPackage) {
   if (!userPackage) return null;
 
@@ -37,6 +37,6 @@ function getEffectivePackageExpiry(userPackage) {
   return moment(startDate).add(duration, "days").endOf("day");
 }
 
-module.exports = {
+export {
   getEffectivePackageExpiry,
 };

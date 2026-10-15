@@ -1,7 +1,7 @@
-const cron = require("node-cron");
-const UserPackagesM = require("../model/UserPackagesM");
-const User = require("../model/UserM");
-const admin = require("../config/firebaseConfig");
+import cron from "node-cron";
+import UserPackagesM from "../models/userPackageModel.js";
+import User from "../models/userModel.js";
+import admin from "../config/firebaseConfig.js";
 const sentReminders = new Set();
 
 function startAutoReminder() {
@@ -212,15 +212,8 @@ async function sendExpiryNotification(userPackage, expiryDate) {
   }
 }
 
-// Calculate remaining sessions
-async function calculateActualRemainingSessions(userPackage) {
-  const totalSessions = userPackage.totalSlots || 0;
-  const bookedSessions = userPackage.slots || 0;
-  const remainingSessions = totalSessions - bookedSessions;
-  return remainingSessions;
-}
 
-module.exports = {
+export {
   startAutoReminder,
   checkForThreeSessionsLeft,
 };

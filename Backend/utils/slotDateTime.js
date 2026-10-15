@@ -1,4 +1,4 @@
-const moment = require("moment");
+import moment from "moment";
 
 const DEFAULT_SLOT_FORMATS = [
   "DD-MM-YYYY HH:mm",
@@ -17,7 +17,7 @@ function parseSlotDateTime(dateStr, timeStr, utcOffsetMinutes = 330) {
   ).utcOffset(utcOffsetMinutes, true);
 }
 
-module.exports = {
+export {
   parseSlotDateTime,
 };
 

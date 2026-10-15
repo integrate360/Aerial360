@@ -1,11 +1,28 @@
 
-const express = require("express");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-require("dotenv").config();
-const connectDB = require("./config/db.js");
-const { startAutoReminder } = require("./utils/autoReminderService.js");
-const { errorHandler } = require("./middleware/errorHandler");
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+dotenv.config();
+
+import connectDB from "./config/db.js";
+import { startAutoReminder } from "./utils/autoReminderService.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+
+import adminRoutes from "./routes/adminRoutes.js";
+import locationRoutes from "./routes/locationRoutes.js";
+import classRoutes from "./routes/classRoutes.js";
+import advertisementRoutes from "./routes/advertisementRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+import staffRoutes from "./routes/staffRoutes.js";
+import packageRoutes from "./routes/packageRoutes.js";
+import enquiryRoutes from "./routes/enquiryRoutes.js";
+import userPackageRoutes from "./routes/userPackageRoutes.js";
+import bacheloretteRoutes from "./routes/bacheloretteRoutes.js";
+import appVersionRoutes from "./routes/appVersionRoutes.js";
 
 const app = express();
 
@@ -70,26 +87,26 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ✅ Routes
-app.use("/api", require("./route/AdminR.js"));
-app.use("/api", require("./route/LocationR.js"));
-app.use("/api", require("./route/ClassR.js"));
-app.use("/api", require("./route/AdvertisementR.js"));
-app.use("/api", require("./route/CategoryR.js"));
-app.use("/api", require("./route/UserR.js"));
-app.use("/api", require("./route/BookingR.js"));
-app.use("/api", require("./route/PaymentR.js"));
-app.use("/api", require("./route/StaffR.js"));
-app.use("/api", require("./route/PackageR.js"));
-app.use("/api", require("./route/EnquiryR.js"));
-app.use("/api", require("./route/UserPackageR.js"));
-app.use("/api", require("./route/bacheloretteR.js"));
-app.use("/api", require("./route/appVersionRoutes.js"));
+app.use("/api", adminRoutes);
+app.use("/api", locationRoutes);
+app.use("/api", classRoutes);
+app.use("/api", advertisementRoutes);
+app.use("/api", categoryRoutes);
+app.use("/api", userRoutes);
+app.use("/api", bookingRoutes);
+app.use("/api", paymentRoutes);
+app.use("/api", staffRoutes);
+app.use("/api", packageRoutes);
+app.use("/api", enquiryRoutes);
+app.use("/api", userPackageRoutes);
+app.use("/api", bacheloretteRoutes);
+app.use("/api", appVersionRoutes);
 
 // ✅ Error Handler
 app.use(errorHandler);
 
 // ✅ Start Server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 6000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

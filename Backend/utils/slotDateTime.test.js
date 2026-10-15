@@ -1,6 +1,6 @@
-const assert = require("node:assert/strict");
+import assert from "node:assert/strict";
 
-const { parseSlotDateTime } = require("./slotDateTime");
+import { parseSlotDateTime } from "./slotDateTime.js";
 
 {
   const m = parseSlotDateTime("21-04-2026", "18:30", 330);
