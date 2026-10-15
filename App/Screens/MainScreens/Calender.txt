@@ -1,0 +1,409 @@
+import React, {useState, useEffect} from 'react';
+import {
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  View,
+  FlatList,
+  Image,
+  Modal,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import HeaderComponent from '../Header/HeaderComponent';
+import {Colors} from '../Config/Config';
+import {bookingData} from '../BookingCard';
+import {Calendar} from 'react-native-calendars';
+import moment from 'moment';
+import {useNavigation} from '@react-navigation/native';
+const CalendarScreen = () => {
+  const today = moment()?.format('YYYY-MM-DD'); // Get today's date in YYYY-MM-DD format
+  const [activeTab, setActiveTab] = useState(bookingData[0]?.id);
+  const [activeDate, setActiveDate] = useState(today); // Set current date as default active
+  const [selectedMonth, setSelectedMonth] = useState(
+    moment().format('YYYY-MM'),
+  );
+  const [dates, setDates] = useState([]);
+  const [showCalendar, setShowCalendar] = useState(false); // State for showing the calendar modal
+  const [userData, setUserData] = useState([]); // State for storing random user data
+  const [formattedDate, setFormattedDate] = useState(''); // State for formatted date
+  const [isLoading, setIsLoading] = useState(true);
+  const navigation = useNavigation();
+  useEffect(() => {
+    generateDates(selectedMonth);
+    const formatted = moment(today).format('dddd, MMM D');
+    setFormattedDate(formatted); // Set formatted date`
+    FetchUserData();
+  }, [selectedMonth]);
+
+  const FetchUserData = () => {
+    fetch('https://randomuser.me/api/?results=15') // Fetch 10 random users
+      .then(response => response.json())
+      .then(data => {
+        setUserData(data.results);
+        setIsLoading(false);
+      })
+      .catch(error => console.error('Error fetching user data:', error));
+  };
+
+  const generateDates = monthYear => {
+    const startOfMonth = moment(monthYear).startOf('month');
+    const daysInMonth = moment(monthYear).daysInMonth();
+    const allDates = [];
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      allDates.push({
+        day: day,
+        dayName: moment({
+          year: startOfMonth.year(),
+          month: startOfMonth.month(),
+          day,
+        }).format('ddd'), // Get the day name
+      });
+    }
+
+    setDates(allDates);
+  };
+
+  const handleDayPress = day => {
+    const selectedMonthYear = moment(day.dateString).format('YYYY-MM');
+    setSelectedMonth(selectedMonthYear);
+    generateDates(selectedMonthYear);
+    setActiveDate(day.dateString);
+    FetchUserData();
+    const formatted = moment(day.dateString).format('dddd, MMM D');
+    setFormattedDate(formatted);
+  };
+
+  const renderTabItem = ({item}) => (
+    <TouchableOpacity
+      style={[styles.tabButton, activeTab === item?.id && {}]}
+      onPress={() => setActiveTab(item?.id) + FetchUserData()}>
+      <Text
+        style={[
+          styles.tabText,
+          activeTab === item?.id && {
+            fontSize: 17,
+            color: activeTab === item?.id ? '#fff' : '#777',
+          },
+        ]}>
+        {item?.title?.toUpperCase()}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const renderDateItem = ({item}) => {
+    const date = moment(
+      `${selectedMonth}-${item?.day < 10 ? '0' : ''}${item?.day}`,
+    ).format('YYYY-MM-DD');
+    const isPastDate = moment(date).isBefore(today); // Check if the date is in the past
+
+    return (
+      <TouchableOpacity
+        style={{
+          alignItems: 'center',
+          marginHorizontal: 4,
+          ...(activeDate === date && {
+            backgroundColor: '#fff',
+            borderRadius: 25,
+            borderWidth: 2,
+            borderColor: '#fff',
+          }),
+        }}
+        onPress={() => {
+          if (!isPastDate) {
+            setActiveDate(date);
+            handleDayPress({dateString: date});
+            FetchUserData();
+          }
+        }}
+        disabled={isPastDate}>
+        <View
+          style={{
+            width: 50,
+            height: 50,
+            borderRadius: 25,
+            backgroundColor: '#fff',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 1,
+            borderColor: '#777',
+            ...(activeDate === date && {
+              backgroundColor: Colors.primary,
+              borderColor: '#fff',
+            }),
+            ...(isPastDate && {
+              backgroundColor: '#f0f0f0',
+              borderColor: '#ccc',
+            }),
+          }}>
+          <Text
+            style={{
+              fontSize: 17,
+              color: activeDate === date ? '#fff' : '#777',
+              fontWeight: 'bold',
+            }}>
+            {item?.day}
+          </Text>
+        </View>
+        <Text
+          style={{
+            fontSize: 14,
+            color: activeDate === date ? Colors.primary : '#777',
+            marginTop: 5,
+            ...(isPastDate && {
+              color: '#ccc',
+            }),
+          }}>
+          {item?.dayName}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderUserItem = ({item}) => {
+    const formatDate = dateString => {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat('en-US', {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric',
+      }).format(date);
+    };
+
+    return (
+      <TouchableOpacity
+        style={{margin: 5, borderRadius: 8, padding: 12}}
+        onPress={() => navigation.navigate('CalendarDetails', {item: item})}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Image
+            source={{uri: item?.picture?.large}}
+            style={{width: 60, height: 60, borderRadius: 30, marginRight: 10}}
+          />
+
+          <View>
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: '#555'}}>
+              {item?.name?.first} {item?.name?.last}
+            </Text>
+
+            <Text style={{fontSize: 14, color: '#666', fontWeight: '500'}}>
+              Location: {item?.location?.city}
+            </Text>
+            <Text style={{fontSize: 14, color: '#666', fontWeight: '500'}}>
+              {formatDate(item?.registered?.date)}
+            </Text>
+          </View>
+        </View>
+        <View style={{borderWidth: 0.2, top: 20, opacity: 0.2}}></View>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <>
+      <HeaderComponent
+        onOpenCalendar={isOpen => {
+          if (isOpen) {
+            setShowCalendar(isOpen);
+          }
+        }}
+        TrueFun={true}
+      />
+      <View style={{backgroundColor: '#fff'}}>
+        <LinearGradient
+          colors={[Colors.primary, Colors.secondary]}
+          start={{x: 0.0, y: 0.2}}
+          end={{x: 0.5, y: 1.0}}
+          style={styles.tabContainer}>
+          <FlatList
+            data={bookingData}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={item => item?.id}
+            renderItem={renderTabItem}
+            contentContainerStyle={styles.flatListContent}
+            ItemSeparatorComponent={() => <View style={{width: 10}} />}
+          />
+        </LinearGradient>
+
+        <LinearGradient
+          colors={['#fff', '#fff']}
+          start={{x: 0.0, y: 0.2}}
+          end={{x: 0.7, y: 1.0}}
+          style={styles.calendarContainer}>
+          <FlatList
+            data={dates}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={item => item.day.toString()}
+            renderItem={renderDateItem}
+            contentContainerStyle={styles.flatListContent}
+            ItemSeparatorComponent={() => <View style={{}} />}
+          />
+        </LinearGradient>
+
+        {/* Modal for Calendar */}
+        <Modal
+          visible={showCalendar}
+          animationType="fade"
+          onRequestClose={() => setShowCalendar(false)}
+          transparent={true} // Enables transparent background
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+          }}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+            }}>
+            <View
+              style={{
+                width: '80%',
+                backgroundColor: '#fff',
+                borderRadius: 10,
+                padding: 20,
+                alignItems: 'center',
+              }}>
+              <Calendar
+                current={today}
+                minDate={today}
+                onDayPress={handleDayPress}
+                markedDates={{
+                  [activeDate]: {selected: true, selectedColor: Colors.primary},
+                }}
+                monthFormat={'yyyy MM'}
+                hideArrows={false}
+                hideExtraDays={true}
+                style={{
+                  marginBottom: 20, // Space below calendar
+                }}
+              />
+              <TouchableOpacity
+                style={{
+                  backgroundColor: Colors.primary,
+                  paddingVertical: 10,
+                  paddingHorizontal: 40,
+                  borderRadius: 5,
+                }}
+                onPress={() => setShowCalendar(false)}>
+                <Text
+                  style={{
+                    color: '#fff',
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                  }}>
+                  Close
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        <View style={{padding: 10, alignItems: 'flex-start', marginLeft: 10}}>
+          <Text style={{fontSize: 18, fontWeight: 'bold', color: '#777'}}>
+            {formattedDate || 'Select a date'}
+          </Text>
+        </View>
+
+        <ScrollView contentContainerStyle={{paddingBottom: '100%'}}>
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <FlatList
+              data={userData}
+              keyExtractor={item => item?.login?.uuid}
+              renderItem={renderUserItem}
+              scrollEnabled={false}
+            />
+          )}
+        </ScrollView>
+      </View>
+    </>
+  );
+};
+
+const styles = StyleSheet.create({
+  calendarContainer: {
+    paddingVertical: 13,
+  },
+  flatListContent: {
+    paddingHorizontal: 10,
+  },
+  tabContainer: {
+    elevation: 3,
+    paddingVertical: 10,
+    backgroundColor: Colors.secondary,
+  },
+  tabButton: {
+    paddingVertical: 15,
+    paddingHorizontal: 17,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+  tabText: {
+    fontSize: 13,
+    color: '#fff',
+  },
+  card: {
+    margin: 10,
+    borderRadius: 10,
+    elevation: 3,
+    backgroundColor: '#fff',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  cardContent: {
+    padding: 15,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 14,
+    marginBottom: 10,
+    color: '#555',
+  },
+  locationText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  calendarIconContainer: {
+    alignItems: 'flex-end',
+    marginRight: 10,
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    marginTop: 40,
+  },
+  closeButton: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: Colors.primary,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+});
+
+export default CalendarScreen;

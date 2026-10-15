@@ -1,0 +1,47 @@
+APP
+Package
+    partial booking
+        Allow users to book the remaining slots.
+        Allow users to do lower booking slots than total slots. (Done)
+        show users remaining slots in the packages. (done)
+        show booked packages to the user. (done)
+    UI 
+        before making every payment add term & condition (button with hyperlink) (done)
+        on package classes dropdown send it to the calendar (done)
+        auto feed rawazor pay mobile (done)
+        show the description of package (done)
+        with package list add single session on the top (done)
+        "All service.." swap to "You can select any classes from below please click continue to make your appointment". (done)
+    Classes selectedion
+        click continue to select another class in package (done)
+        classes name bold and prominent on calendar page (done)
+Book
+    book weekly view show the next dates also
+    error while selecting the weekly
+    change the booking calendar selecteddate 
+schedule 
+    colour code of the schedule 
+Home
+    swap book to calendar (done)
+    upcoming current day not showing current date (done)
+Class Details
+    remove book multiple and book now add single button named "Continue" (done)
+    trainer in class (done)
+
+
+BACKEND
+get a package of users. (Done)
+get packages by categoryId. (Done)
+update the remaining slots in the packages. (Done)
+
+
+ADMIN PANEL (done)
+    allow admin to create backdated bookings (done)
+    Edit location (done)
+    monthly week earnings (done)
+
+
+
+
+
+static pages of in our courses in home 

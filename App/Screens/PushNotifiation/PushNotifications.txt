@@ -1,0 +1,83 @@
+import React, {useEffect, useState} from 'react';
+import {View, Text, Button} from 'react-native';
+import messaging from '@react-native-firebase/messaging';
+
+const PushNotificationScreen = () => {
+  const [notification, setNotification] = useState('');
+
+  useEffect(() => {
+    // Foreground notification handler
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      setNotification(remoteMessage.notification.body);
+    });
+
+    // Background/terminated state handler
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      setNotification(remoteMessage.notification.body);
+    });
+
+    // When the app is launched from a terminated state due to a notification
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage) {
+          setNotification(remoteMessage.notification.body);
+        }
+      });
+
+    // Request permission for iOS (necessary for notifications)
+    messaging()
+      .requestPermission()
+      .then(() => {
+      })
+      .catch(err => console.log('Notification permission rejected', err));
+
+    return unsubscribe;
+  }, []);
+
+  const sendPushNotification = async () => {
+    const token =
+      'cphnODpeTdWrVM1Qq0WVyq:APA91bHSYFTe5o9_G6e-qRtItU7dGkxZy-yrrJEXZ75C4DRHGixhvf3zGLvRokMZXx4Q7z8M-hsWa7OUzporschAbpJTGddfBT7UuQwhac5OFGUy_PA5fjo'; // The FCM token of the target device
+
+    const message = {
+      message: {
+        token: token,
+        data: {},
+        notification: {
+          body: 'This is an FCM notification message!',
+          title: 'FCM Message',
+        },
+      },
+    };
+
+    try {
+      const response = await fetch(
+        'https://fcm.googleapis.com/v1/projects/airboundapp/messages:send',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ya29.ElqKBGN2Ri_Uz...HnS_uNreA',
+          },
+          body: JSON.stringify(message),
+        },
+      );
+
+      const data = await response.json();
+    } catch (error) {
+      console.error('Error sending push notification:', error);
+    }
+  };
+
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>Push Notification Example</Text>
+      <Text>
+        {notification ? `Received: ${notification}` : 'No notification yet'}
+      </Text>
+      <Button title="Send Push Notification" onPress={sendPushNotification} />
+    </View>
+  );
+};
+
+export default PushNotificationScreen;

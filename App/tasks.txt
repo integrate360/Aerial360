@@ -1,0 +1,25 @@
+swap book multipul to book package (done)
+change upcoming location icon to map pin (done)
+bold upcoming item title (done)
+enquiry now at bottom ui (done)
+filter after the category select (done)
+profile edit background to white (done)
+active tab on book tab white backroung and text gradiant (done)
+classes details remove staff add trainer (done)
+room to studio add khar also in location with box ui (done)
+add validation to select location (done)
+add legend for dates color (done)
+auto fist select in select value (done)
+remove pricing in my booikngs (done)
+select location in package calendar fix (done)
+how it work show inactive tab (active white-bg and gradiant text, inactive faded) (done)
+add default date to current in calendar view (done)
+load image in profile (done)
+Image upload in profile (done)
+Add Payment Successfully modal after the payment is done (done)
+
+
+
+get availability slots time 3 hours buffer of time 
+
+reschedule get time after than you can reschedule

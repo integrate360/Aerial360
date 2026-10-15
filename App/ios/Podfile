@@ -1,0 +1,65 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '15.1'
+
+target 'AirboundApp' do
+  config = use_native_modules!
+
+  use_frameworks! :linkage => :static
+
+  $RNFirebaseAsStaticFramework = true
+
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+
+  pod 'razorpay-pod', '1.3.9'
+
+  pre_install do |installer|
+    installer.pod_targets.each do |pod|
+      if pod.name.eql?('razorpay-pod')
+        def pod.build_type
+          Pod::BuildType.static_library
+        end
+      end
+    end
+  end
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :hermes_enabled => false
+  )
+
+  target 'AirboundAppTests' do
+    inherit! :complete
+  end
+
+  post_install do |installer|
+    react_native_post_install(installer)
+
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+        config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -ObjC'
+
+        # Needed for react-native-image-crop-picker
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+
+        # Needed for react-native-vector-icons with static frameworks
+        config.build_settings['DEFINES_MODULE'] = 'YES'
+      end
+    end
+
+    # Fix for react-native-share with static linkage
+    installer.pods_project.targets.each do |target|
+      if target.name == 'react-native-share'
+        target.build_configurations.each do |config|
+          config.build_settings['SWIFT_VERSION'] = '5.0'
+        end
+      end
+    end
+  end
+end

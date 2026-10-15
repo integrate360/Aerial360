@@ -42,3 +42,32 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Mobile / React Native / iOS / Android
+ios/Pods/
+Pods/
+ios/.xcode.env.local
+.xcode.env.local
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+xcuserdata/
+DerivedData/
+*.ipa
+*.xcuserstate
+
+.gradle/
+.kotlin/
+local.properties
+*.apk
+*.aab
+
+# Ruby / Bundler
+.bundle/
+vendor/bundle/
+vendor/
+.ruby-lsp/
+
+# Metro / Fastlane
+*.jsbundle
+.metro-health-check*

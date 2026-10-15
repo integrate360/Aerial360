@@ -1,0 +1,218 @@
+import React, {useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  Linking,
+  StyleSheet,
+  Animated,
+  PanResponder,
+  Dimensions,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import {Colors} from '../Config/Config';
+import { getAllPackges } from '../Api/Allapi';
+const {height} = Dimensions.get('window'); // Get screen height
+
+const CustomBottomSheet = ({locations}) => {
+  const translateY = useRef(new Animated.Value(height)).current; // Initially off-screen
+  const [isOpen, setIsOpen] = useState(false);
+
+  const snapPoints = [height * 0.25, height * 0.5, height * 0.9];
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (event, gestureState) => {
+        const newTranslateY = Math.max(0, translateY._value + gestureState.dy);
+        translateY.setValue(newTranslateY);
+      },
+      onPanResponderRelease: (event, gestureState) => {
+        const velocity = gestureState.vy;
+        let finalPosition = snapPoints[0];
+
+        if (velocity > 0.5) {
+          finalPosition = snapPoints[2];
+        } else if (velocity < -0.5) {
+          finalPosition = snapPoints[0];
+        } else {
+          const nearestSnapPoint = snapPoints.reduce((prev, curr) =>
+            Math.abs(curr - translateY._value) <
+            Math.abs(prev - translateY._value)
+              ? curr
+              : prev,
+          );
+          finalPosition = nearestSnapPoint;
+        }
+
+        Animated.spring(translateY, {
+          toValue: finalPosition,
+          useNativeDriver: true,
+        }).start(() => setIsOpen(finalPosition === snapPoints[0]));
+      },
+    }),
+  ).current;
+
+  const toggleSheet = () => {
+    const toValue = isOpen ? height : snapPoints[0];
+    Animated.spring(translateY, {
+      toValue,
+      useNativeDriver: true,
+    }).start(() => setIsOpen(!isOpen));
+  };
+
+  const openGoogleMaps = link => {
+    Linking.openURL(link).catch(err => console.error('An error occurred', err));
+  };
+
+  const renderLocation = ({item}) => (
+    <View style={styles.card}>
+      <Text style={styles.locationName}>{item.name}</Text>
+      <Text style={styles.address}>{item.address}</Text>
+      <TouchableOpacity
+        style={styles.linkButton}
+        onPress={() => openGoogleMaps(item.googleMapLink)}>
+        <Text style={styles.linkText}>View on Google Maps</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <>
+      <TouchableOpacity style={styles.toggleButton} onPress={toggleSheet}>
+        <Text style={styles.toggleText}>
+          {isOpen ? 'Close' : 'Open'} Locations
+        </Text>
+      </TouchableOpacity>
+      <Animated.View
+        style={[styles.bottomSheet, {transform: [{translateY}]}]}
+        {...panResponder.panHandlers}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.title}>Available Locations</Text>
+          <FlatList
+            data={locations}
+            renderItem={renderLocation}
+            keyExtractor={item => item._id}
+            contentContainerStyle={styles.listContainer}
+          />
+        </View>
+      </Animated.View>
+    </>
+  );
+};
+
+const App = () => {
+  const [locations, setLocations] = useState([
+    {
+      _id: '676e5d17fb2e22a854e45e4d',
+      name: 'Bandra',
+      address:
+        'Shri Hari Mandir Marg, F Block Bandra Kurla Complex, Maharashtra Nagar, Sant Dnyaneshwar Nagar, Bandra East, Mumbai, 400051',
+      googleMapLink: 'https://maps.app.goo.gl/vk9diBSqzaxuFRi18',
+    },
+    {
+      _id: '676e6030b5eda6eac0ec4887',
+      name: 'Khar',
+      address:
+        '2nd Floor, Empressa Building, 2nd Rd, Khar, Ram Krishna Nagar, Khar West, Mumbai, Maharashtra 400052',
+      googleMapLink: 'https://maps.app.goo.gl/Fio1YycYcCQN5hiN7',
+    },
+  ]);
+
+  return (
+    <LinearGradient
+      style={{flex: 1}}
+      colors={[Colors.primary, Colors.secondary]}
+      start={{x: 0.0, y: 0.2}}
+      end={{x: 0.7, y: 1.0}}>
+      <CustomBottomSheet locations={locations} />
+    </LinearGradient>
+  );
+};
+
+const styles = StyleSheet.create({
+  bottomSheet: {
+    position: 'absolute',
+    width: '100%',
+    height: height,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
+  },
+  toggleButton: {
+    margin: 16,
+    padding: 12,
+    backgroundColor: Colors.secondary,
+    borderRadius: 10,
+    alignSelf: 'center',
+  },
+  toggleText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+  contentContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 10,
+    color: Colors.primary,
+    textAlign: 'center',
+  },
+  listContainer: {
+    paddingBottom: 20,
+  },
+  card: {
+    marginVertical: 10,
+    padding: 16,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+  },
+  locationName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: Colors.primary,
+  },
+  address: {
+    fontSize: 14,
+    color: '#555',
+    marginVertical: 5,
+  },
+  linkButton: {
+    marginTop: 10,
+    padding: 8,
+    borderRadius: 10,
+    backgroundColor: Colors.secondary,
+    alignSelf: 'flex-start',
+  },
+  linkText: {
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: '500',
+  },
+});
+
+export default App;
+
+
+
+ const handleContinue = () => {
+    if (!data || data.length === 0) return;
+
+    // Cycle to the next class (loop back to the first class when the end is reached)
+    const nextIndex = (selectedClassIndex + 1) % data.length;
+    setSelectedClassIndex(nextIndex);
+
+    // Mark the calendar dates for the new class
+    markCalendarDates(data[nextIndex].availability);
+
+    // Clear selected date, time, and location
+    setSelectedDate(null);
+    setSelectedTime(null); // Reset selected time
+    setSelectedLocation(null);
+    setShowAvailability(null); // Reset availability slots
+  };

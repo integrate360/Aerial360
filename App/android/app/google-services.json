@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "612631005712",
+    "project_id": "airbound-97ce5",
+    "storage_bucket": "airbound-97ce5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:612631005712:android:e4a015fed9f7184bd89895",
+        "android_client_info": {
+          "package_name": "com.airboundapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCm6Ta0gQy0uXBvC5GIH4fq311HcrPT5Q8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

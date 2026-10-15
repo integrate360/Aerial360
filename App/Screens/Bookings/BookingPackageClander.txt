@@ -1,0 +1,594 @@
+import React, {useState, useEffect, useContext} from 'react';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  Alert,
+  TouchableOpacity,
+  ToastAndroid,
+} from 'react-native';
+import {Calendar} from 'react-native-calendars';
+import {
+  Button,
+  Menu,
+  Chip,
+  Divider,
+  ActivityIndicator,
+} from 'react-native-paper';
+import moment from 'moment';
+import {PackagePayment, showAvailability} from '../Api/Allapi';
+import {Colors} from '../Config/Config';
+import RazorpayCheckout from 'react-native-razorpay';
+import {RAZORPAY_KEY_ID} from '../Config/Config';
+import {PaymentRequest} from '../Api/Allapi';
+import UserContext from '../../context/UserContext';
+import {SelectList} from 'react-native-dropdown-select-list';
+const BookingPackageCalender = ({
+  packageId,
+  data,
+  days,
+  prices,
+  packageDuration,
+}) => {
+  const [markedDates, setMarkedDates] = useState({});
+  const [selectedClassIndex, setSelectedClassIndex] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [showAvailabilitys, setShowAvailability] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [locations, setLocations] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [menudata, setMenuData] = useState(false);
+  const [storedata, setStoreData] = useState([]);
+  const [classid, setClassId] = useState('');
+  const [selected, setSelected] = useState(null);
+
+  const {userId, email, user} = useContext(UserContext);
+
+  const TotalClasses = data?.length;
+  useEffect(() => {
+    if (data && data?.length > 0) {
+      markCalendarDates(data[0]?.availability, data[0]?.name, storedata);
+    }
+    let newArray = locations.map(item => {
+      return {key: item?._id, value: item?.value};
+    });
+    setMenuData(newArray);
+  }, [data]);
+
+  const startRazorpayPayment = () => {
+    const options = {
+      description: 'Booking Payment',
+      image: 'https://your-logo-url', // Replace with your logo URL
+      currency: 'INR', // Currency in which payment will be made
+      key: RAZORPAY_KEY_ID, // Replace with your Razorpay key
+      amount: prices * 100, // Amount to be charged (in paise)
+      name: 'Class Booking',
+      prefill: {
+        email: email, // Add the user's email
+        contact: user?.phone, // Add the user's contact number
+        name: user?.name, // Add the user's name
+      },
+      theme: {
+        color: Colors.primary, // Customize the theme color
+      },
+    };
+
+    RazorpayCheckout.open(options)
+      .then(paymentResponse => {
+        // Payment success
+        if (paymentResponse.razorpay_payment_id) {
+          PostBookingData();
+          ToastAndroid.show(ToastAndroid.SHORT('Payment Successfull'));
+        }
+      })
+      .catch(error => {
+        // Handle errors or when the user exits
+        if (error.code === 1) {
+          // Code 1 indicates the user exited the Razorpay modal
+          Alert.alert('Payment Cancelled', 'You exited the payment process.');
+        } else {
+          // Other errors
+          // Alert.alert(
+          //   'Payment Failed',
+          //   error.description || 'Something went wrong during the payment.',
+          // );
+        }
+      });
+  };
+
+  const PostBookingData = () => {
+    PackagePayment(packageId, prices, userId, true, storedata);
+  };
+
+  const markCalendarDates = (availability, name, datass) => {
+    const availabilityData = {};
+    const currentDate = moment().startOf('day');
+    const validityTill = moment().add(packageDuration, 'days');
+
+    // Create a Set of valid days for O(1) lookup
+    const validDays = new Set(availability?.map(item => item?.day));
+    while (currentDate.isSameOrBefore(validityTill)) {
+      const dateString = currentDate.format('YYYY-MM-DD');
+      const selectedClass = name || 'No Class';
+
+      if (validDays.has(currentDate.day())) {
+        if (
+          datass?.some(
+            entry =>
+              entry.date === moment(currentDate).format('YYYY-MM-DD') &&
+              entry.className === selectedClass,
+          )
+        ) {
+          availabilityData[dateString] = {
+            customStyles: {
+              container: {
+                backgroundColor: 'orangered',
+              },
+              text: {
+                color: 'white',
+              },
+            },
+          };
+        } else {
+          availabilityData[dateString] = {
+            customStyles: {
+              container: {
+                backgroundColor: 'green',
+              },
+              text: {
+                color: 'white',
+              },
+            },
+          };
+        }
+      } else {
+        availabilityData[dateString] = {
+          customStyles: {
+            container: {
+              backgroundColor: '#f0f0f0', // Light gray for disabled dates
+            },
+            text: {
+              color: '#d0d0d0',
+            },
+          },
+          disabled: true,
+          disableTouchEvent: true,
+        };
+      }
+
+      currentDate.add(1, 'day');
+    }
+
+    setMarkedDates(availabilityData);
+  };
+
+  const updateDisabledDates = () => {
+    const disabledDates = {};
+
+    storedata.forEach(entry => {
+      // Check if the date and className match any entry in storedata
+      const matchClassDate = storedata.some(
+        item => item.date === entry.date && item.className === entry.className,
+      );
+
+      // Only disable the d
+      // ate if both date and className match
+      if (matchClassDate) {
+        // disabledDates[entry.date] = {
+        //   disabled: true,
+        //   disableTouchEvent: true,
+        //   marked: true,
+        //   dotColor: 'red',
+        // };
+      }
+    });
+
+    setMarkedDates(prev => ({
+      ...prev,
+      ...disabledDates,
+    }));
+  };
+
+  const selectedDates = date => {
+    if (storedata.length === days) {
+      ToastAndroid.show(
+        `Availability: Only ${days} sessions available.`,
+        ToastAndroid.SHORT,
+      );
+    } else {
+      handleDateSelect(date);
+    }
+  };
+
+  const handleDateSelect = date => {
+    const selectedClass = data[selectedClassIndex]?.name || 'No Class';
+
+    if (
+      storedata.some(
+        entry => entry.date === date && entry.className === selectedClass,
+      )
+    ) {
+      Alert.alert('This date is already selected for the same class!');
+      return;
+    }
+
+    setSelectedDate(date);
+    Showdate(date, data[selectedClassIndex]?._id);
+    setClassId(data[selectedClassIndex]?._id);
+  };
+
+  const Showdate = (date, classId) => {
+    setLoading(true);
+    showAvailability(moment(date)?.format('DD-MM-YYYY'), classId)
+      .then(res => {
+        processAvailabilityData(res);
+        setShowAvailability(res);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  };
+
+  const processAvailabilityData = availability => {
+    if (availability && availability?.slots) {
+      const availableSlots = availability?.slots?.map(slot => ({
+        time: slot?.time,
+        locations: slot?.locations?.map(location => ({
+          ...location,
+          key: location?._id,
+          value: location?.name,
+        })),
+      }));
+
+      if (availableSlots.length > 0) {
+        const firstSlot = availableSlots[0];
+        setSelectedTime(firstSlot?.time);
+        setLocations(firstSlot?.locations);
+        let newArray = firstSlot?.locations?.map(item => {
+          return {key: item?._id, value: item?.value};
+        });
+        setMenuData(newArray);
+      }
+    }
+  };
+
+  const handleTimeSelect = time => {
+    setSelectedTime(time);
+  };
+
+  // const handleLocationSelect = location => {
+  //   setSelectedLocation(location);
+
+  //   setMenuVisible(false);
+  // };
+
+  const handleContinue = () => {
+    if (selectedDate && selectedTime && selectedLocation) {
+      const selectedClass = data[selectedClassIndex]?.name || 'No Class';
+      const newEntry = {
+        classId: classid,
+        className: data[selectedClassIndex]?.name,
+        user: userId,
+        //  className: selectedClass,
+        dates: selectedDate,
+        date: selectedDate,
+        duration: 3,
+        time: selectedTime,
+        location: selectedLocation,
+        amount: prices,
+        people: 1,
+      };
+
+      if (
+        storedata.some(
+          entry =>
+            entry.date === selectedDate && entry.className === selectedClass,
+        )
+      ) {
+        Alert.alert('This date is already selected for the same class!');
+        return;
+      }
+      const nextIndex = selectedClassIndex % data?.length;
+      setStoreData(prev => [...prev, newEntry]);
+      markCalendarDates(data[nextIndex]?.availability, data[nextIndex]?.name, [
+        ...storedata,
+        newEntry,
+      ]);
+
+      updateDisabledDates();
+      setSelectedDate(null);
+      setSelectedTime(null);
+      setSelectedLocation(null);
+    }
+  };
+  const paymentdata = () => {
+    if (storedata.length === days) {
+      startRazorpayPayment();
+    } else {
+      handleContinues();
+    }
+  };
+
+  const handleContinues = () => {
+    if (!data || data.length === 0) return;
+
+    const nextIndex = (selectedClassIndex + 1) % data?.length;
+
+    setSelectedClassIndex(nextIndex);
+    markCalendarDates(
+      data[nextIndex]?.availability,
+      data[nextIndex]?.name,
+      storedata,
+    );
+
+    setSelectedDate(null);
+    setSelectedTime(null);
+    setSelectedLocation(null);
+    setShowAvailability(null);
+  };
+
+  const convertTo12HourFormat = time => {
+    const [hour, minute] = time.split(':');
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minute} ${period}`;
+  };
+
+  return (
+    <>
+      <ScrollView
+        style={styles.detailsContainer}
+        contentContainerStyle={{paddingBottom: 100}}>
+        <View style={styles.container}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Text style={styles.classText}>
+              {data[selectedClassIndex]?.name || 'No Class Available'}
+            </Text>
+            <Text style={styles.classText}>
+              Package: {selectedClassIndex + 1}/
+              {TotalClasses || 'No Class Available'}
+            </Text>
+          </View>
+
+          <Calendar
+            style={styles.calendar}
+            markedDates={markedDates}
+            // markingType={'simple'}
+            minDate={moment()?.format('YYYY-MM-DD')}
+            markingType={'custom'}
+            maxDate={moment()
+              ?.add(packageDuration, 'days')
+              .format('YYYY-MM-DD')}
+            hideExtraDays={true}
+            onDayPress={day => selectedDates(day?.dateString)}
+          />
+
+          {loading ? (
+            <ActivityIndicator
+              size="large"
+              color={Colors.primary}
+              style={styles.loader}
+            />
+          ) : (
+            selectedDate &&
+            showAvailabilitys && (
+              <>
+                <Text style={styles.dateText}>
+                  Selected Date: {selectedDate}
+                </Text>
+
+                <View style={styles.timeContainer}>
+                  {showAvailabilitys?.slots?.map((slot, index) => (
+                    <Button
+                      key={index}
+                      mode={
+                        selectedTime === slot?.time ? 'contained' : 'outlined'
+                      }
+                      onPress={() => handleTimeSelect(slot?.time)}
+                      style={styles.timeButton}>
+                      {convertTo12HourFormat(slot?.time)}
+                    </Button>
+                  ))}
+                </View>
+                <SelectList
+                  setSelected={setSelected}
+                  data={menudata}
+                  boxStyles={{
+                    borderRadius: 10,
+                    paddingHorizontal: 10,
+                    backgroundColor: '#f2f2f2',
+                    borderWidth: 0,
+                    marginTop: 10,
+                  }}
+                  inputStyles={{
+                    color: 'black',
+                  }}
+                  dropdownStyles={{
+                    borderRadius: 10,
+                    backgroundColor: '#f2f2f2',
+                    borderWidth: 0,
+                  }}
+                  dropdownTextStyles={{
+                    color: 'black', // Dropdown text color
+                  }}
+                  placeholder="Select Location"
+                  maxHeight={200}
+                  search={false}
+                />
+
+                {selectedLocation && (
+                  <View style={styles.selectedLocation}>
+                    <Chip onClose={() => setSelectedLocation(null)}>
+                      {selectedLocation.value}
+                    </Chip>
+                  </View>
+                )}
+
+                <Text></Text>
+                <Button
+                  mode="contained"
+                  onPress={handleContinue}
+                  style={{
+                    backgroundColor: Colors.primary,
+                    width: '40%',
+                    alignSelf: 'center',
+                    borderRadius: 10,
+                  }}>
+                  Add to List
+                </Button>
+              </>
+            )
+          )}
+
+          <View style={{padding: 20}}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: 'bold',
+                marginBottom: 10,
+                color: 'black',
+              }}>
+              Selected Entries:
+            </Text>
+            {storedata?.map((entry, index) => (
+              <View
+                key={index}
+                style={{
+                  marginBottom: 15,
+                  padding: 10,
+                  backgroundColor: '#f9f9f9',
+                  borderRadius: 5,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <View>
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      width: '100%',
+                    }}>
+                    <Text style={styles?.selectedTitle}>
+                      {entry?.className}
+                    </Text>
+                    <Text style={styles?.selectedDate}>
+                      {moment(entry?.date).format('MMM DD-dd YYYY')}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      width: '100%',
+                    }}>
+                    <Text style={styles?.selectedLocation}>
+                      {entry?.location?.name}
+                    </Text>
+                    <Text style={styles?.selectedTime}>{entry?.time}</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 10,
+          left: 10,
+          right: 10,
+          backgroundColor: 'white',
+          padding: 10,
+        }}>
+        <Button
+          mode="contained"
+          onPress={paymentdata}
+          style={{
+            borderRadius: 10,
+            paddingVertical: 3,
+            backgroundColor: Colors.primary,
+          }}>
+          Continue
+        </Button>
+      </View>
+    </>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 10,
+  },
+  calendar: {
+    marginVertical: 20,
+  },
+  loader: {
+    marginVertical: 10,
+  },
+  classText: {
+    fontSize: 18,
+    marginBottom: 10,
+    color: Colors.primary,
+    fontWeight: '500',
+    marginLeft: 10,
+  },
+  dateText: {
+    marginTop: 10,
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  timeButton: {
+    margin: 5,
+    borderRadius: 5,
+    width: '30%',
+  },
+  selectedLocation: {
+    color: 'black',
+    fontSize: 15,
+  },
+  selectedDate: {
+    color: 'black',
+    marginTop: 10,
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  selectedTime: {
+    color: 'black',
+    fontSize: 15,
+  },
+  selectedTitle: {
+    color: 'black',
+    fontSize: 20,
+  },
+  divider: {
+    marginVertical: 10,
+  },
+  selectedClassInfo: {
+    marginTop: 10,
+  },
+  listHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  listItem: {
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 5,
+  },
+});
+
+export default BookingPackageCalender;

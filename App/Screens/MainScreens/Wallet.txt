@@ -1,0 +1,136 @@
+import React from 'react';
+import {
+  ScrollView,
+  Text,
+  View,
+  TextInput,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import {Colors} from '../Config/Config';
+import HeaderComponent from '../Header/HeaderComponent';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+const {width} = Dimensions.get('window');
+const Wallet = () => {
+  return (
+    <>
+      <>
+        {<HeaderComponent />}
+        <ScrollView contentContainerStyle={{marginBottom: -150, flex: 1}}>
+          <LinearGradient
+            style={{
+              flex: 1,
+            }}
+            colors={[Colors.primary, Colors.secondary]}
+            start={{x: 0.1, y: 0.0}}
+            end={{x: 0.4, y: 0.6}}>
+            <View style={{bottom: 10, alignSelf: 'center', marginTop: 90}}>
+              <Text
+                style={{
+                  color: '#FFF',
+                  fontWeight: '300',
+                  fontSize: 25,
+                  letterSpacing: 2,
+                  marginBottom: 15,
+                  opacity: 0.7,
+                }}>
+                YOUR CREDITS
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                }}>
+                <FontAwesome5 name="coins" size={54} color="#fff" />
+                <Text
+                  style={{color: '#fff', fontSize: 55, paddingHorizontal: 20}}>
+                  1200
+                </Text>
+              </View>
+              <Text
+                style={{
+                  alignSelf: 'center',
+                  fontSize: 18,
+                  color: '#fff',
+                  opacity: 0.7,
+                  top: 10,
+                }}>
+                Total Balance
+              </Text>
+            </View>
+
+            <View
+              style={{
+                flex: 1,
+                borderTopLeftRadius: 300,
+                backgroundColor: '#fff',
+                borderTopRightRadius: 300,
+                width: '140%',
+                alignSelf: 'center',
+                marginTop: 90,
+              }}>
+              <View style={{alignSelf: 'center', marginTop: 50}}>
+                <Text
+                  style={{textAlign: 'center', fontSize: 25, color: 'black'}}>
+                  BUY CREDITS
+                </Text>
+                <Text style={{color: 'black', opacity: 0.6, padding: 2}}>
+                  Credits can ve used throughout the app to buy
+                </Text>
+                <Text
+                  style={{alignSelf: 'center', color: 'black', opacity: 0.6}}>
+                  your desired class and packages.
+                </Text>
+              </View>
+
+              <View style={{flex: 1, alignItems: 'center', marginTop: 20}}>
+                <TextInput
+                  style={{
+                    width: width * 0.6,
+                    padding: 20,
+                    borderWidth: 1,
+                    borderColor: 'black',
+                    borderRadius: 15,
+                    opacity: 0.6,
+
+                    color: 'black',
+                    paddingHorizontal: 40,
+                  }}
+                  placeholder="Enter Amount"
+                  placeholderTextColor={'black'}
+                  keyboardType="number-pad"
+                />
+
+                <Text
+                  style={{
+                    alignSelf: 'center',
+                    color: 'black',
+                    marginTop: 5,
+                    fontSize: 15,
+                  }}>
+                  1 Rupee = 1 Coins
+                </Text>
+
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 75,
+                    paddingVertical: 11,
+                    marginTop: 25,
+                    borderRadius: 25,
+                    backgroundColor: Colors.secondary,
+                  }}>
+                  <Text style={{fontSize: 17, color: '#fff', letterSpacing: 1}}>
+                    CHECKOUT
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </LinearGradient>
+        </ScrollView>
+      </>
+    </>
+  );
+};
+
+export default Wallet;

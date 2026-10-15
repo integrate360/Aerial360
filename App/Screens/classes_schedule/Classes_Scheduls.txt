@@ -1,0 +1,284 @@
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import { SelectList } from 'react-native-dropdown-select-list';
+import { Colors } from '../Config/Config';
+import HeaderComponent from '../Header/HeaderComponent';
+import { getAllLocations, getAllClasses, getAllCategerys } from '../Api/Allapi';
+import { useNavigation } from '@react-navigation/native';
+import fonts from '../FontFamily/FontFamily';
+
+const Classes_Schedules = () => {
+  const [selected, setSelected] = useState('');
+  const [activeTab, setActiveTab] = useState('all');
+  const [locations, setLocations] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [scheduleData, setScheduleData] = useState([]);
+  const navigation = useNavigation();
+
+  const colorsArray = ['#E63946', '#F1A208', '#457B9D', '#2A9D8F', '#264653'];
+
+  useEffect(() => {
+    // Fetch all locations
+    getAllLocations()
+      .then(res => {
+        const locationNames = res.map(location => ({
+          value: location?.name,
+          key: location._id,
+        }));
+        setLocations(locationNames);
+      })
+      .catch(err => console.error('Error fetching locations:', err));
+
+    // Fetch categories and classes
+    getAllCategerys()
+      .then(res => {
+        const categoryNames = res?.data?.map(category => ({
+          title: category.title,
+          id: category._id,
+        }));
+
+        const updatedCategories = [{ title: 'All', id: 'all' }, ...categoryNames];
+        setCategories(updatedCategories);
+
+        // Default fetch for "All" classes
+        classesfetch('all');
+      })
+      .catch(err => console.error('Error fetching categories:', err));
+  }, []);
+
+  const classesfetch = async (categoryId, locationId = null) => {
+    try {
+      const res = await getAllClasses();
+      if (!res?.data) throw new Error('No data received from getAllClasses.');
+
+      const filteredData = res?.data?.filter(classItem => {
+        const isCategoryMatch =
+          categoryId === 'all' || classItem?.category?._id === categoryId;
+
+        const isLocationMatch = locationId
+          ? classItem?.availability?.some(availabilityItem =>
+              availabilityItem?.locations?.some(
+                location => location?._id === locationId
+              )
+            )
+          : true;
+
+        return isCategoryMatch && isLocationMatch;
+      });
+
+      setScheduleData(filteredData);
+    } catch (error) {
+      console.error('Error fetching classes:', error);
+    }
+  };
+
+  const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const convertTo12HourFormat = time24 => {
+    if (!time24) return 'Invalid time';
+
+    const [hours, minutes] = time24.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const adjustedHours = hours % 12 || 12;
+    return `${adjustedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  };
+
+  return (
+    <>
+      <HeaderComponent />
+      <ScrollView style={styles.container}>
+   
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.tabContainer}>
+          {categories.map((category, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => {
+                setActiveTab(category.id);
+                if (category.id === 'all') {
+                  setSelected(''); // Clear location for "All"
+                  classesfetch('all');
+                } else {
+                  classesfetch(category.id, selected);
+                }
+              }}
+              style={[
+                styles.tab,
+                activeTab === category.id && styles.activeTab,
+              ]}>
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === category.id && styles.activeTabText,
+                ]}>
+                {category.title}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <View style={styles.header}>
+          <SelectList
+            setSelected={val => {
+              setSelected(val);
+              const selectedLocation = locations.find(
+                location => location?.value === val
+              );
+              if (selectedLocation) {
+                classesfetch(activeTab, selectedLocation?.key);
+              }
+            }}
+            data={locations}
+            save="value"
+            value={selected} // Bind the dropdown value to selected state
+            boxStyles={styles.dropdownBox}
+            inputStyles={styles.dropdownInput}
+            dropdownStyles={styles.dropdownStyles}
+            dropdownTextStyles={styles.dropdownText}
+            placeholder="Select location"
+            search={false}
+          />
+        </View>
+
+        
+
+        <ScrollView
+          horizontal
+          style={styles.scheduleContainer}
+          showsHorizontalScrollIndicator={false}>
+          {daysOfWeek.map((day, dayIndex) => (
+            <View key={dayIndex} style={styles.dayContainer}>
+              <Text style={styles.dayText}>{day}</Text>
+              {scheduleData
+                .filter(classItem =>
+                  classItem?.availability?.some(slot => slot?.day === dayIndex)
+                )
+                .map((classItem, idx) => (
+                  <TouchableOpacity
+                    key={idx}
+                    onPress={() =>
+                      navigation.navigate('CalendarDetails', {
+                        item: classItem,
+                      })
+                    }>
+                    <View
+                      style={[
+                        styles.classItem,
+                        {
+                          backgroundColor:
+                            colorsArray[idx % colorsArray.length], // Dynamic color
+                        },
+                      ]}>
+                      {classItem?.availability
+                        .filter(slot => slot?.day === dayIndex)
+                        .map((res, resIdx) => (
+                          <Text key={resIdx} style={styles.classTime}>
+                            {convertTo12HourFormat(res?.time)}
+                          </Text>
+                        ))}
+                      <Text style={styles.className}>{classItem?.name}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+            </View>
+          ))}
+        </ScrollView>
+      </ScrollView>
+    </>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    marginVertical: 10,
+  },
+  tab: {
+    marginHorizontal: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    backgroundColor: '#f0f0f0',
+  },
+  activeTab: {
+    backgroundColor: Colors.primary,
+  },
+  tabText: {
+    fontSize: 14,
+    color: '#333',
+    fontFamily: fonts.regular,
+    fontWeight: '600',
+  },
+  activeTabText: {
+    color: '#fff',
+  },
+  header: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+  },
+  dropdownBox: {
+    borderWidth: 0,
+    backgroundColor: '#F9F9F9',
+  },
+  dropdownInput: {
+    color: '#777',
+    fontSize: 16,
+    fontFamily: fonts.regular,
+  },
+  dropdownStyles: {
+    backgroundColor: '#F9F9F9',
+    borderRadius: 8,
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: '#333',
+    fontFamily: fonts.regular,
+  },
+  scheduleContainer: {
+    paddingVertical: 10,
+  },
+  dayContainer: {
+    width: 100,
+    padding: 10,
+    marginHorizontal: 5,
+    backgroundColor: '#1E293B',
+    borderRadius: 10,
+  },
+  dayText: {
+    color: '#94A3B8',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  classItem: {
+    marginVertical: 5,
+    padding: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3, // Adds shadow for Android
+  },
+  classTime: {
+    color: '#FFFFFF',
+    fontSize: 12,
+  },
+  className: {
+    color: '#D1D5DB',
+    fontSize: 10,
+  },
+});
+
+export default Classes_Schedules;

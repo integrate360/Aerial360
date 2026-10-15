@@ -1,0 +1,103 @@
+{
+    "meta": {
+        "queryReceivedAt": "2026-04-08T06:55:13.962Z"
+    },
+    "slots": [
+        {
+            "bookingAvailable": false,
+            "capacity": 8,
+            "date": "2026-04-08",
+            "location": "676e6030b5eda6eac0ec4887",
+            "message": "This slot is fully booked. Please try another date or time.",
+            "occupiedSeats": 8,
+            "remainingSeats": 0,
+            "selectedClass": [Object
+            ],
+            "time": "18:30"
+        },
+        {
+            "bookingAvailable": false,
+            "capacity": null,
+            "date": "2026-04-08",
+            "location": "676e5d17fb2e22a854e45e4d",
+            "message": "No matching availability for the given class/day/time/location",
+            "occupiedSeats": 0,
+            "remainingSeats": 0,
+            "selectedClass": [Object
+            ],
+            "time": "18:30"
+        },
+        {
+            "bookingAvailable": false,
+            "capacity": null,
+            "date": "2026-04-08",
+            "location": "676e6030b5eda6eac0ec4887",
+            "message": "No matching availability for the given class/day/time/location",
+            "occupiedSeats": 0,
+            "remainingSeats": 0,
+            "selectedClass": [Object
+            ],
+            "time": "18:00"
+        },
+        {
+            "bookingAvailable": false,
+            "capacity": null,
+            "date": "2026-04-08",
+            "location": "676e5d17fb2e22a854e45e4d",
+            "message": "No matching availability for the given class/day/time/location",
+            "occupiedSeats": 0,
+            "remainingSeats": 0,
+            "selectedClass": [Object
+            ],
+            "time": "18:00"
+        },
+        {
+            "bookingAvailable": false,
+            "capacity": null,
+            "date": "2026-04-08",
+            "location": "676e6030b5eda6eac0ec4887",
+            "message": "No matching availability for the given class/day/time/location",
+            "occupiedSeats": 0,
+            "remainingSeats": 0,
+            "selectedClass": [Object
+            ],
+            "time": "19:00"
+        },
+        {
+            "bookingAvailable": false,
+            "capacity": null,
+            "date": "2026-04-08",
+            "location": "676e5d17fb2e22a854e45e4d",
+            "message": "No matching availability for the given class/day/time/location",
+            "occupiedSeats": 0,
+            "remainingSeats": 0,
+            "selectedClass": [Object
+            ],
+            "time": "19:00"
+        },
+        {
+            "bookingAvailable": false,
+            "capacity": null,
+            "date": "2026-04-08",
+            "location": "676e6030b5eda6eac0ec4887",
+            "message": "No matching availability for the given class/day/time/location",
+            "occupiedSeats": 0,
+            "remainingSeats": 0,
+            "selectedClass": [Object
+            ],
+            "time": "16:00"
+        },
+        {
+            "bookingAvailable": false,
+            "capacity": null,
+            "date": "2026-04-08",
+            "location": "676e5d17fb2e22a854e45e4d",
+            "message": "No matching availability for the given class/day/time/location",
+            "occupiedSeats": 0,
+            "remainingSeats": 0,
+            "selectedClass": [Object
+            ],
+            "time": "16:00"
+        }
+    ]
+}

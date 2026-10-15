@@ -1,0 +1,183 @@
+import React from 'react';
+import {View} from 'react-native';
+import BottomNavigation from './Screens/BottomNav/BottomNavigation';
+import {PaperProvider, DefaultTheme} from 'react-native-paper';
+import FAQsection from './Screens/FAQsection';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import Gifting from './Screens/Gifting';
+import Our_Trainers from './Screens/Our_Trainers';
+import TERMSCompnent from './Screens/MainScreens/TERMSCompnent';
+import Login from './Screens/AuthScreen/Login';
+import SignUp from './Screens/AuthScreen/SignUp';
+import SplashScreen from './Screens/AuthScreen/SplashScreen';
+import UBSeeAll from './Screens/UBSeeAll';
+import BcDetails from './Screens/BcDetails';
+import Packages from './Screens/Package/Packages';
+import PackagesDetails from './Screens/Package/PackagesDetails';
+import {UserProvider} from './context/UserContext';
+import ProfileEdit from './Screens/MainScreens/ProfileEdit';
+import CalendarDetails from './Screens/MainScreens/CalendarDetails';
+import BookingCard from './Screens/BookingCard';
+import Booking from './Screens/Bookings/Booking';
+import SearchClasses from './Screens/SearchClasses/SearchClasses';
+import How_it_Works from './Screens/MainScreens/How_it_Works';
+import CalendarScreen from './Screens/MainScreens/Calendar';
+const Stack = createStackNavigator();
+import BookBatchelorette from './Screens/Book_A_Batchelorette/BookBatchelorette';
+import PushNotifications from './Screens/PushNotifiation/PushNotifications';
+import Classes_Scheduls from './Screens/classes_schedule/Classes_Scheduls';
+import ForgotPasswrod from './Screens/AuthScreen/ForgotPasswrod';
+import OrderSummary from './Screens/Bookings/OrderSummary';
+const lightTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#FFFFFF',
+    primary: '#6200ee',
+    accent: '#03dac4',
+    text: '#000000',
+    surface: '#FFFFFF',
+  },
+};
+
+const App = () => {
+  return (
+    <View style={{flex: 1, backgroundColor: lightTheme.colors.background}}>
+      <NavigationContainer>
+        <PaperProvider theme={lightTheme}>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="SplashScreen"
+              component={SplashScreen}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="Forgot"
+              component={ForgotPasswrod}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="BookBatchelorette"
+              component={BookBatchelorette}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="SearchClasses"
+              component={SearchClasses}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="How_it_Works"
+              component={How_it_Works}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="CalendarScreen"
+              component={CalendarScreen}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="SignUp"
+              component={SignUp}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="Classes_Scheduls"
+              component={Classes_Scheduls}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="Booking"
+              component={Booking}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="OrderSummary"
+              component={OrderSummary}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="BottomNavigation"
+              component={BottomNavigation}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="PushNotifications"
+              component={PushNotifications}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="BookingCard"
+              component={BookingCard}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="CalendarDetails"
+              component={CalendarDetails}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="ProfileEdit"
+              component={ProfileEdit}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="PackagesDetails"
+              component={PackagesDetails}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="Packages"
+              component={Packages}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="BcDetails"
+              component={BcDetails}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="UBSeeAll"
+              component={UBSeeAll}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="FAQsection"
+              component={FAQsection}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="TERMSCompnent"
+              component={TERMSCompnent}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="Gifting"
+              component={Gifting}
+              options={{title: '', headerShown: false}}
+            />
+            <Stack.Screen
+              name="Our_Trainers"
+              component={Our_Trainers}
+              options={{title: '', headerShown: false}}
+            />
+          </Stack.Navigator>
+        </PaperProvider>
+      </NavigationContainer>
+    </View>
+  );
+};
+
+export default () => {
+  return (
+    <UserProvider>
+      <App />
+    </UserProvider>
+  );
+};
