@@ -1,4 +1,4 @@
-package com.airboundapp
+package com.aerial360.app
 
 import android.app.Application
 import com.facebook.react.PackageList

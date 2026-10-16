@@ -60,7 +60,6 @@ const optionalAuth = asyncHandler(async (req, res, next) => {
           req.user = user;
         }
       } catch (error) {
-        // Token invalid/expired - continue as unauthenticated
       }
     }
   }

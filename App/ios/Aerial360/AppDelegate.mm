@@ -7,7 +7,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [FIRApp configure]; // ADD THIS LINE
-  self.moduleName = @"AirboundApp";
+  self.moduleName = @"Aerial360";
   self.initialProps = @{};
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];

@@ -1263,7 +1263,7 @@ PODS:
     - FirebaseCoreExtension
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.28.0):
+  - RNGestureHandler (2.17.1):
     - DoubleConversion
     - glog
     - RCT-Folly (= 2024.01.01.00)
@@ -1298,7 +1298,7 @@ PODS:
     - RNNotifee/NotifeeCore (= 9.1.8)
   - RNNotifee/NotifeeCore (9.1.8):
     - React-Core
-  - RNScreens (4.16.0):
+  - RNScreens (3.34.0):
     - DoubleConversion
     - glog
     - RCT-Folly (= 2024.01.01.00)
@@ -1341,7 +1341,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.13.0):
+  - RNSVG (15.3.0):
     - React-Core
   - RNVectorIcons (10.3.0):
     - DoubleConversion
@@ -1682,17 +1682,17 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 36d7f232bfe7c9b5c494cb7793230424ed32c388
   RNFBApp: 22c91c2d4ef60be1de426d3544f68c348e036bb0
   RNFBMessaging: ab2be07f5d10cd524797785926a1d5c59af10d0d
-  RNGestureHandler: ca43971958e84f7743b2af02b429dc4b9bb17ae9
+  RNGestureHandler: d3d9084b7628ba2058ded52f8300eaf975380e0e
   RNImageCropPicker: d5387003612dd08d52fb062760136e0e473df186
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
-  RNScreens: b8501b15b1f4cfd48abb86d4de539b35d61ff1c7
+  RNScreens: 801607e0eebe8829b2019c4789a545b602148c4a
   RNShare: 08f9a04156d4648d9077a09ac4dc472e14d58b8d
-  RNSVG: 1ab3a3f49eff9853690012d9672e46fdb5ef75be
+  RNSVG: e77adf5edb2302f0f10dd03a09e92bb9420d914e
   RNVectorIcons: 7541fcd7862fa045803a5fe4f8d5e2cd649d02e9
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: 9ad2c02dbd9811bb5a35fe23081cb0f5d5a3f9dd
 
-PODFILE CHECKSUM: ff6e22947d756de6c2541551212908226af4a25a
+PODFILE CHECKSUM: e8ad14ecf903ffafa54255983cbc11a88054f2e7
 
 COCOAPODS: 1.16.2

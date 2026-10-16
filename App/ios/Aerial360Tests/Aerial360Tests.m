@@ -7,11 +7,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface AirboundAppTests : XCTestCase
+@interface Aerial360Tests : XCTestCase
 
 @end
 
-@implementation AirboundAppTests
+@implementation Aerial360Tests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
 {

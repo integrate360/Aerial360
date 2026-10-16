@@ -9,4 +9,6 @@ import {name as appName} from './app.json';
 
 // Initialize the App
 AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent('Aerial360', () => App);
+AppRegistry.registerComponent('AirboundApp', () => App);
 
